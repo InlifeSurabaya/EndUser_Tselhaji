@@ -4,6 +4,38 @@ Dokumen ini berisi **aturan pengembangan proyek** untuk menjaga konsistensi stru
 
 ---
 
+## 🚀 Setup Project
+
+Sebelum mulai mengembangkan, ikuti langkah-langkah setup berikut:
+
+```bash
+# 1. Clone repository
+git clone <repository-url>
+
+# 2. Masuk ke folder project
+cd <nama-project>
+
+# 3. Install dependencies
+composer install
+npm install
+
+# 4. Copy file environment
+cp .env.example .env
+
+# 5. Generate app key
+php artisan key:generate
+
+# 6. Jalankan migrasi database dan seeder (opsional)
+php artisan migrate:fresh --seed
+
+# 7. Jalankan server
+php artisan serve
+```
+
+> ⚠️ Pastikan menggunakan **PHP 8.2+**, **Composer terbaru**, dan sudah mengaktifkan ekstensi Laravel yang dibutuhkan (misal: `pdo`, `mbstring`, `openssl`).
+
+---
+
 ## ⚙️ 1. Struktur dan Penamaan File
 
 ### 📂 Livewire Components
