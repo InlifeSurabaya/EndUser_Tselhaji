@@ -10,4 +10,76 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /*
+ |--------------------------------------------------------------------------
+ | Color Palette
+ |--------------------------------------------------------------------------
+ |
+ |
+ |
+ */
+
+    /* == 1. WARNA UTAMA (PRIMARY)== */
+    --color-primary-50: #fef5f5;
+    --color-primary-100: #feebeb;
+    --color-primary-200: #fedada;
+    --color-primary-300: #fdbfbf;
+    --color-primary-400: #fa9292;
+    --color-primary-500: #f45555;
+    --color-primary-600: #ec2028;
+    --color-primary-700: #cd1720;
+    --color-primary-800: #b1161e;
+    --color-primary-900: #93181f;
+    --color-primary-950: #50080c;
+
+    /* == 2. WARNA NETRAL (NEUTRAL)== */
+    --color-neutral-50: #f8f9fa;
+    --color-neutral-100: #f1f3f5;
+    --color-neutral-200: #e9ecef;
+    --color-neutral-300: #dee2e6;
+    --color-neutral-400: #ced4da;
+    --color-neutral-500: #adb5bd;
+    --color-neutral-600: #868e96;
+    --color-neutral-700: #495057;
+    --color-neutral-800: #343a40;
+    --color-neutral-900: #212529;
+    --color-neutral-950: #131517;
+
+    /* == 3. WARNA AKSEN (ACCENT)== */
+    --color-accent-50: #eef6ff;
+    --color-accent-100: #dbeaff;
+    --color-accent-200: #badfff;
+    --color-accent-300: #8ccaff;
+    --color-accent-400: #57aeff;
+    --color-accent-500: #298fff;
+    --color-accent-600: #006eff;
+    --color-accent-700: #005ae6;
+    --color-accent-800: #0045b3;
+    --color-accent-900: #003b94;
+    --color-accent-950: #002359;
+
+    /* == 4. WARNA SOROTAN (HIGHLIGHT) == */
+    --color-highlight-50: #fcf4fe;
+    --color-highlight-100: #fae8fd;
+    --color-highlight-200: #f6d3fb;
+    --color-highlight-300: #f0b2f8;
+    --color-highlight-400: #e685f2;
+    --color-highlight-500: #d655e9;
+    --color-highlight-600: #c133d7;
+    --color-highlight-700: #a726b9;
+    --color-highlight-800: #8d219a;
+    --color-highlight-900: #751e7e;
+    --color-highlight-950: #4a0c50;
+
+    /* == 5. WARNA SEMANTIK (SEMANTIC) - UI FEEDBACK == */
+    --color-success: #17c964;
+    --color-warning: #f5a524;
+    --color-error: var(--color-primary-600); /* Menggunakan warna merah utama */
+    --color-info: var(--color-accent-600); /* Menggunakan warna aksen */
+
+    /* == ALIAS WARNA DASAR == */
+    --color-background: var(--color-neutral-50); /* Background utama situs */
+    --color-foreground: var(--color-neutral-900); /* Teks utama situs */
+    --color-border: var(--color-neutral-300); /* Border standar */
 }
