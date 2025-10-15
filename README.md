@@ -167,8 +167,36 @@ chore(ui): improve form layout styling
 
 ---
 
+## 🧽 9. Format Kode dan Pint Check
+### 📌 Aturan Wajib Sebelum Commit:
+
+Sebelum melakukan commit, **wajib menjalankan perintah berikut:**
+
+```bash
+./vendor/bin/pint
+```
+
+
+> `php pint` digunakan untuk memastikan semua file mengikuti standar format kode Laravel (PSR-12).
+> Commit **tidak boleh dilakukan** sebelum menjalankan perintah ini.
+
+### ✅ Workflow Contoh:
+
+```bash
+# Setelah selesai coding
+./vendor/bin/pint
+
+# Pastikan tidak ada error atau file yang belum diformat
+git add app/Http/Livewire/CreateBook.php
+git commit -m "feat(book): add Livewire component for book creation"
+
+```
 📘 **Catatan Akhir**
 
 > Tujuan dari peraturan ini adalah menjaga proyek tetap bersih, konsisten, dan mudah dikelola oleh seluruh tim.
+> Selalu pastikan:
+> * Menjalankan `./vendor/bin/pint` sebelum commit
+> * Membuat PR ke `dev` saja
+> * Tidak pernah merge langsung ke `main` atau `master`
 
 
