@@ -99,11 +99,15 @@ nama/tipe/namafitur
 
 #### Tipe Branch:
 
-| Tipe  | Keterangan                                                    |
-| ----- | ------------------------------------------------------------- |
-| feat  | Menambahkan fitur baru                                        |
-| fix   | Memperbaiki bug                                               |
-| chore | Perubahan kecil/non-fungsional (misal: refactor, dokumentasi) |
+| Jenis Branch | Prefix Format    | Tujuan                                                           | Contoh                           |
+| :----------- | :--------------- | :--------------------------------------------------------------- | :------------------------------- |
+| **Feature**  | `nama/feat/`     | Menambahkan fitur baru                                           | `raihan/feat/add-book-module`    |
+| **Fix**      | `nama/fix/`      | Memperbaiki bug yang ditemukan                                   | `raihan/fix/save-book-error`     |
+| **Chore**    | `nama/chore/`    | Pekerjaan non-fungsional (update dependencies, dokumentasi, dsb) | `raihan/chore/update-readme`     |
+| **Refactor** | `nama/refactor/` | Perubahan struktur kode tanpa mengubah fungsionalitas            | `raihan/refactor/book-component` |
+| **Test**     | `nama/test/`     | Membuat atau memperbaiki unit test / feature test                | `raihan/test/livewire-form-test` |
+| **Release**  | `release/x.x.x`  | Branch untuk persiapan rilis (bugfix & QA terakhir)              | `release/1.0.0`                  |
+| **Hotfix**   | `hotfix/x.x.x`   | Perbaikan bug kritis di production                               | `hotfix/1.0.1`                   |
 
 #### ✅ Contoh:
 
