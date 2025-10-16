@@ -2,15 +2,20 @@
 
 namespace App\Livewire\Auth;
 
+use App\Traits\LogsDeveloper;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
+use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
 #[Title('Login')]
+#[Layout('components.layouts.auth')]
 class Login extends Component
 {
+    use LogsDeveloper;
+
     #[Validate('required|string|exists:users,email')]
     public $email;
     #[Validate('required|string')]
@@ -38,17 +43,32 @@ class Login extends Component
             if (Auth::attempt($credentials, $remember)) {
                 request()->session()->regenerate();
 
-                return $this->redirect('/dashboard', navigate: true);
+                return $this->redirect(route('index.product'), navigate: true);
             }
 
-            $this->addError('email', 'Email atau password yang Anda masukkan salah.');
+            LivewireAlert::title('Waduh, Gagal!')
+                ->text('Email atau password anda salah!')
+                ->toast()
+                ->error()
+                ->position('top-end')
+                ->timer(3000)
+                ->show();
 
         } catch (\Throwable $e) {
-            Log::error('Login attempt failed unexpectedly: ' . $e->getMessage());
+            $this->logErrorForDeveloper($e, [
+                'email' => $validatedData['email'],
+            ]);
 
-            $this->dispatch('login-failed', message: 'Terjadi kesalahan pada server. Silakan coba lagi nanti.');
+            LivewireAlert::title('Waduh, Gagal!')
+                ->text('Email atau password anda salah!')
+                ->toast()
+                ->error()
+                ->position('top-end')
+                ->timer(3000)
+                ->show();
         }
     }
+
     public function render()
     {
         return view('livewire.auth.login');
