@@ -12,7 +12,7 @@ class CategoryCountryProduct extends Model
     /** @use HasFactory<\Database\Factories\CategoryCountryProductFactory> */
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'country_code'];
 
     public function product(): HasMany
     {
