@@ -41,7 +41,7 @@ class IndexProduct extends Component
 
     public function render()
     {
-        $products = Product::with('country:id,name')
+        $products = Product::with('country:id,name,country_code')
             ->where('is_active', 1)
             ->latest()
             ->paginate(8);

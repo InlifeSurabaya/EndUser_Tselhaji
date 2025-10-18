@@ -5,7 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Livewire\Auth\Login;
 use App\Livewire\Product\IndexProduct;
 use App\Livewire\Dashboard;
-
+use App\Livewire\User\UserProfile;
+use App\Livewire\Admin\DashboardAdmin;
 
 // === AUTH ROUTE ===
 Route::get('/login', Login::class)->name('login');
@@ -16,3 +17,10 @@ Route::get('/', Dashboard::class)->name('dashboard');
 
 // === PRODUCT ROUTE ===
 Route::get('/product', IndexProduct::class)->name('index.product');
+
+// === USER ROUTE ===
+Route::get('/user-profile', UserProfile::class)->name('user.profile');
+
+
+// === ADMIN ROUTE ===
+Route::get('/admin', DashboardAdmin::class)->name('admin.dashboard');

@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\CategoryCountryProduct;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Rinvex\Country\CountryLoader;
 
 class CategoryCountryProductSeeder extends Seeder
 {
@@ -13,6 +14,13 @@ class CategoryCountryProductSeeder extends Seeder
      */
     public function run(): void
     {
-        CategoryCountryProduct::factory()->count(10)->create();
+        $countries = CountryLoader::countries();
+
+        foreach ($countries as $code => $country) {
+            CategoryCountryProduct::create([
+                'name' => is_array($country) ? ($country['name']['common'] ?? $country['name']) : $country,
+                'country_code' => strtolower($code),
+            ]);
+        }
     }
 }

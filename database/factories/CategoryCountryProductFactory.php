@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Rinvex\Country\CountryLoader;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\CategoryCountryProduct>
@@ -17,7 +18,7 @@ class CategoryCountryProductFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->unique()->country(),
+
         ];
     }
 }
