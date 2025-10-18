@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Auth;
 
+use App\Enum\RoleEnum;
 use App\Traits\LogsDeveloper;
 use Illuminate\Support\Facades\Auth;
 use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
@@ -43,6 +44,13 @@ class Login extends Component
             if (Auth::attempt($credentials, $remember)) {
                 request()->session()->regenerate();
 
+                $user = Auth::user();
+
+                // is user admin
+                if ($user->hasRole(RoleEnum::SUPER_ADMIN->value)) {
+                    return $this->redirect(route('admin.dashboard'), navigate: true);
+                }
+
                 return $this->redirect(route('index.product'), navigate: true);
             }
 
@@ -53,6 +61,8 @@ class Login extends Component
                 ->position('top-end')
                 ->timer(3000)
                 ->show();
+
+            $this->reset();
 
         } catch (\Throwable $e) {
             $this->logErrorForDeveloper($e, [
