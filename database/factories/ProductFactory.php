@@ -18,7 +18,7 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         return [
-            'country_id' => CategoryCountryProduct::factory(),
+            'country_id' => fake()->numberBetween(1, 250),
             'name' => 'Paket Data ' . fake()->words(2, true),
             'detail' => fake()->sentence(),
             'harga' => fake()->numberBetween(10000, 200000),
