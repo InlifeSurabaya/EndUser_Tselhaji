@@ -2,7 +2,10 @@
 
 namespace App\Livewire\Product;
 
+use App\Models\Order;
 use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -24,20 +27,7 @@ class IndexProduct extends Component
         $this->showModal = true;
     }
 
-    /**
-     * Proses pembelian produk
-     */
-    public function buyNow(int $productId): void
-    {
-        $product = Product::find($productId);
 
-        // Logika bisnis pembelian di sini
-        session()->flash('message', 'Anda telah berhasil membeli paket: ' . $product->name);
-
-        // Tutup modal dan reset state
-        $this->showModal = false;
-        $this->selectedProduct = null;
-    }
 
     public function render()
     {
