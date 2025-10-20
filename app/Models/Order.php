@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 use Rinvex\Country\Country;
 
 class Order extends Model
@@ -15,7 +16,7 @@ class Order extends Model
     use HasFactory, SoftDeletes, GenerateNumberTrait;
 
     protected $fillable = [
-        'user_id',
+        'user_id', 'uuid',
         'product_id',
         'order_number', 'voucher_id', 'category_country_product_id', 'original_price', 'discount_amount', 'final_price', 'status', 'customer_name', 'customer_email', 'customer_phone', 'notes', 'expired_at', 'settlement_time',
     ];
@@ -25,6 +26,31 @@ class Order extends Model
      * @var string
      */
     protected string $invoicePrefix = 'ORD';
+
+    /**
+     * Override nama kolom db
+     * @var string
+     */
+    protected string $invoiceNumberField = 'order_number';
+
+    /**
+     * Generate uuid otomatis
+     * @return void
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (empty($model->uuid)) {
+                $model->uuid = Str::uuid();
+            }
+
+            if (empty($model->{$model->getInvoiceNumberField()})) {
+                $model->{$model->getInvoiceNumberField()} = $model->generateInvoiceNumber();
+            }
+        });
+    }
 
     public function user(): BelongsTo
     {
