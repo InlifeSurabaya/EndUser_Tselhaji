@@ -2,9 +2,7 @@
 
 namespace App\Traits;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Cache;
 
 trait GenerateNumberTrait
 {

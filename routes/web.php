@@ -7,9 +7,9 @@ use App\Livewire\Product\IndexProduct;
 use App\Livewire\Dashboard;
 use App\Livewire\User\UserProfile;
 use App\Livewire\Admin\DashboardAdmin;
-use App\Livewire\Payment\Detail as DetailPayment;
-use App\Livewire\Payment\Create as CreatePayment;
-
+use App\Livewire\Order\Create as OrderCreate;
+use App\Livewire\Order\Detail as OrderDetail;
+use App\Livewire\Order\CheckOrder;
 
 // === AUTH ROUTE ===
 Route::get('/login', Login::class)->name('login');
@@ -29,5 +29,9 @@ Route::get('/user-profile', UserProfile::class)->name('user.profile');
 Route::get('/admin', DashboardAdmin::class)->name('admin.dashboard');
 
 // === PAYMENT ROUTE ===
-Route::get('/order', DetailPayment::class)->name('payment.detail');
-Route::get('/create-order', CreatePayment::class)->name('payment.create');
+
+// === ORDER ROUTE ===
+Route::get('/order', OrderCreate::class)->name('order.create');
+Route::get('/order/{uuidOrder}', OrderDetail::class)->name('order.detail');
+Route::get('/check-order', CheckOrder::class)->name('order.check');
+

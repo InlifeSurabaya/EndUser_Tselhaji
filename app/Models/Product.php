@@ -13,7 +13,7 @@ class Product extends Model
     /** @use HasFactory<\Database\Factories\ProductFactory> */
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['name', 'detail', 'harga', 'quota_amount', 'quota_type', 'validity_days', 'discount', 'is_active', 'country_id'];
+    protected $fillable = ['name', 'detail', 'quota_amount', 'price', 'quota_type', 'validity_days', 'discount', 'is_active', 'country_id'];
 
     public function country(): BelongsTo
     {
