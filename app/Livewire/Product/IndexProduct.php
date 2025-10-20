@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -27,7 +28,17 @@ class IndexProduct extends Component
         $this->showModal = true;
     }
 
-
+    /**
+     * Navigate user ke create order
+     *
+     * @param int $productId
+     * @return null
+     */
+    public function newOrder(int $productId)
+    {
+        Session::put('selected_product_id', $productId);
+        return $this->redirect(route('order.create'), navigate: true);
+    }
 
     public function render()
     {
