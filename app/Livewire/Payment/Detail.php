@@ -2,10 +2,11 @@
 
 namespace App\Livewire\Payment;
 
+use App\Models\Order;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
-#[Title('Order Detail')]
+#[Title('Detail Payment')]
 class Detail extends Component
 {
     public function render()
