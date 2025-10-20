@@ -14,9 +14,9 @@
 
             <div class="hidden md:flex md:items-center md:space-x-8">
                 <a wire:navigate href="{{ route('dashboard') }}"
-                   class="text-neutral-600 hover:text-primary-600 transition font-medium">Beranda</a>
-                <a wire:navigate href="{{ route('dashboard') }}"
                    class="text-neutral-600 hover:text-primary-600 transition font-medium">Paket</a>
+                <a wire:navigate href="{{ route('order.check') }}"
+                   class="text-neutral-600 hover:text-primary-600 transition font-medium">Cek Order</a>
                 <a wire:navigate href="#"
                    class="text-neutral-600 hover:text-primary-600 transition font-medium">Bantuan</a>
             </div>
@@ -70,9 +70,9 @@
     <div :class="{'block': open, 'hidden': !open}" class="md:hidden">
         <div class="pt-2 pb-3 space-y-1 px-2">
             <a wire:navigate href="{{ route('dashboard') }}"
-               class="block px-3 py-2 rounded-md text-base font-medium text-neutral-700 hover:text-primary-600 hover:bg-neutral-100">Beranda</a>
-            <a wire:navigate href="{{ route('dashboard') }}"
                class="block px-3 py-2 rounded-md text-base font-medium text-neutral-700 hover:text-primary-600 hover:bg-neutral-100">Paket</a>
+            <a wire:navigate href="{{ route('order.check') }}"
+               class="block px-3 py-2 rounded-md text-base font-medium text-neutral-700 hover:text-primary-600 hover:bg-neutral-100">Cek Order</a>
             <a wire:navigate href="#"
                class="block px-3 py-2 rounded-md text-base font-medium text-neutral-700 hover:text-primary-600 hover:bg-neutral-100">Bantuan</a>
         </div>
