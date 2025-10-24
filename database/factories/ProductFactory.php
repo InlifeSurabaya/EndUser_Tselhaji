@@ -21,7 +21,7 @@ class ProductFactory extends Factory
             'country_id' => fake()->numberBetween(1, 250),
             'name' => 'Paket Data ' . fake()->words(2, true),
             'detail' => fake()->sentence(),
-            'harga' => fake()->numberBetween(10000, 200000),
+            'price' => fake()->numberBetween(10000, 200000),
             'quota_amount' => fake()->randomElement([5, 10, 15, 20, 50]),
             'quota_type' => 'GB',
             'validity_days' => fake()->randomElement([7, 15, 30]),
