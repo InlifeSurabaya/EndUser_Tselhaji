@@ -91,9 +91,14 @@
                         </p>
                     </div>
 
-                    <button type="button"
+
+                    <button type="button" wire:click="createTransactionMidtrans({{$order->id}})"
                             class="w-full mt-6 py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-[var(--color-primary-600)] text-white hover:bg-[var(--color-primary-700)]">
-                        Lanjutkan Pembayaran
+                        @if($order->url_midtrans)
+                            Bayar Sekarang
+                        @else
+                            Lanjutkan Pembayaran
+                        @endif
                     </button>
                 </div>
             </div>
@@ -170,31 +175,31 @@
                     <h2 class="text-xl font-semibold text-[var(--color-neutral-900)] mb-4">Detail Pelanggan</h2>
 
 
-                        <div class="space-y-3">
-                            @if($order->customer_name)
-                                <div class="flex justify-between">
-                                    <span class="text-sm text-[var(--color-neutral-600)]">Nama</span>
-                                    <span
-                                        class="text-sm font-medium text-[var(--color-neutral-800)]">{{ $order->customer_name ?? '' }}</span>
-                                </div>
-                            @endif
+                    <div class="space-y-3">
+                        @if($order->customer_name)
+                            <div class="flex justify-between">
+                                <span class="text-sm text-[var(--color-neutral-600)]">Nama</span>
+                                <span
+                                    class="text-sm font-medium text-[var(--color-neutral-800)]">{{ $order->customer_name ?? '' }}</span>
+                            </div>
+                        @endif
 
-                            @if($order->customer_email)
-                                <div class="flex justify-between">
-                                    <span class="text-sm text-[var(--color-neutral-600)]">Email</span>
-                                    <span
-                                        class="text-sm font-medium text-[var(--color-neutral-800)]">{{ $order->customer_email }}</span>
-                                </div>
-                            @endif
+                        @if($order->customer_email)
+                            <div class="flex justify-between">
+                                <span class="text-sm text-[var(--color-neutral-600)]">Email</span>
+                                <span
+                                    class="text-sm font-medium text-[var(--color-neutral-800)]">{{ $order->customer_email }}</span>
+                            </div>
+                        @endif
 
-                            @if($order->customer_phone)
-                                <div class="flex justify-between">
-                                    <span class="text-sm text-[var(--color-neutral-600)]">Telepon</span>
-                                    <span
-                                        class="text-sm font-medium text-[var(--color-neutral-800)]">{{ $order->customer_phone }}</span>
-                                </div>
-                            @endif
-                        </div>
+                        @if($order->customer_phone)
+                            <div class="flex justify-between">
+                                <span class="text-sm text-[var(--color-neutral-600)]">Telepon</span>
+                                <span
+                                    class="text-sm font-medium text-[var(--color-neutral-800)]">{{ $order->customer_phone }}</span>
+                            </div>
+                        @endif
+                    </div>
                     @if($order->user)
                         <p class="text-sm text-[var(--color-neutral-500)]">
                             Pesanan ini dibuat sebagai Tamu (Guest).

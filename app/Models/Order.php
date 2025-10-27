@@ -18,7 +18,20 @@ class Order extends Model
     protected $fillable = [
         'user_id', 'uuid',
         'product_id',
-        'order_number', 'voucher_id', 'category_country_product_id', 'original_price', 'discount_amount', 'final_price', 'status', 'customer_name', 'customer_email', 'customer_phone', 'notes', 'expired_at', 'settlement_time',
+        'order_number',
+        'voucher_id',
+        'category_country_product_id',
+        'original_price',
+        'discount_amount',
+        'final_price',
+        'status',
+        'customer_name',
+        'customer_email',
+        'customer_phone',
+        'url_midtrans',
+        'notes',
+        'expired_at',
+        'settlement_time',
     ];
 
     /**

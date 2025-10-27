@@ -120,76 +120,84 @@ class Create extends Component
      */
     public function checkVoucher()
     {
-        if (empty($this->voucher)) {
-            $this->voucherModel = null;
-            $this->calculatePrices(); // Hitung ulang tanpa voucher
-            LivewireAlert::title('Oops!')
-                ->text('Kamu belum memasukkan kode voucher.')
-                ->error()
-                ->timer(3000)
-                ->show();
-            return;
-        }
+        DB::beginTransaction();
+        try {
+            if (empty($this->voucher)) {
+                $this->voucherModel = null;
+                $this->calculatePrices(); // Hitung ulang tanpa voucher
+                LivewireAlert::title('Oops!')
+                    ->text('Kamu belum memasukkan kode voucher.')
+                    ->error()
+                    ->timer(3000)
+                    ->show();
+                return;
+            }
 
-        $voucher = Voucher::where('code', $this->voucher)->first();
+            $voucher = Voucher::where('code', $this->voucher)->first();
 
-        // Validasi 1: Apa voucher ada?
-        if (!$voucher) {
-            $this->voucherModel = null;
+            // Validasi 1: Apa voucher ada?
+            if (!$voucher) {
+                $this->voucherModel = null;
+                $this->calculatePrices();
+                LivewireAlert::title('Oops! Voucher Nggak Ketemu')
+                    ->text('Kode voucher sepertinya salah. Coba cek lagi, ya!')
+                    ->error()
+                    ->timer(4000)
+                    ->show();
+                return;
+            }
+
+            // Validasi 2: Apa voucher aktif?
+            if (!$voucher->is_active) {
+                $this->voucherModel = null;
+                $this->calculatePrices();
+                LivewireAlert::title('Yah, Gagal')
+                    ->text('Voucher ini sudah tidak aktif lagi.')
+                    ->error()
+                    ->timer(4000)
+                    ->show();
+                return;
+            }
+
+            // Validasi 3: Apa voucher sudah kedaluwarsa?
+            if ($voucher->end_date && Carbon::parse($voucher->end_date)->isPast()) {
+                $this->voucherModel = null;
+                $this->calculatePrices();
+                LivewireAlert::title('Yah, Kedaluwarsa')
+                    ->text('Voucher ini sudah melewati batas waktu penggunaan.')
+                    ->error()
+                    ->timer(4000)
+                    ->show();
+                return;
+            }
+
+            // Validasi 4: Apa voucher sudah mencapai limit?
+            if ($voucher->usage_limit > 0 && $voucher->used_count >= $voucher->usage_limit) {
+                $this->voucherModel = null;
+                $this->calculatePrices();
+                LivewireAlert::title('Yah, Kehabisan')
+                    ->text('Limit penggunaan voucher ini sudah habis.')
+                    ->error()
+                    ->timer(4000)
+                    ->show();
+                return;
+            }
+
+
+            $this->voucherModel = $voucher;
             $this->calculatePrices();
-            LivewireAlert::title('Oops! Voucher Nggak Ketemu')
-                ->text('Kode voucher sepertinya salah. Coba cek lagi, ya!')
-                ->error()
+
+            LivewireAlert::title('Asyik! Voucher Berhasil 🎉')
+                ->text('Mantap, diskon voucher berhasil diterapkan.')
+                ->success()
                 ->timer(4000)
                 ->show();
-            return;
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
         }
-
-        // Validasi 2: Apa voucher aktif?
-        if (!$voucher->is_active) {
-            $this->voucherModel = null;
-            $this->calculatePrices();
-            LivewireAlert::title('Yah, Gagal')
-                ->text('Voucher ini sudah tidak aktif lagi.')
-                ->error()
-                ->timer(4000)
-                ->show();
-            return;
-        }
-
-        // Validasi 3: Apa voucher sudah kedaluwarsa?
-        if ($voucher->end_date && Carbon::parse($voucher->end_date)->isPast()) {
-            $this->voucherModel = null;
-            $this->calculatePrices();
-            LivewireAlert::title('Yah, Kedaluwarsa')
-                ->text('Voucher ini sudah melewati batas waktu penggunaan.')
-                ->error()
-                ->timer(4000)
-                ->show();
-            return;
-        }
-
-        // Validasi 4: Apa voucher sudah mencapai limit?
-        if ($voucher->usage_limit > 0 && $voucher->used_count >= $voucher->usage_limit) {
-            $this->voucherModel = null;
-            $this->calculatePrices();
-            LivewireAlert::title('Yah, Kehabisan')
-                ->text('Limit penggunaan voucher ini sudah habis.')
-                ->error()
-                ->timer(4000)
-                ->show();
-            return;
-        }
-
-
-        $this->voucherModel = $voucher;
-        $this->calculatePrices();
-
-        LivewireAlert::title('Asyik! Voucher Berhasil 🎉')
-            ->text('Mantap, diskon voucher berhasil diterapkan.')
-            ->success()
-            ->timer(4000)
-            ->show();
     }
 
 
@@ -226,6 +234,13 @@ class Create extends Component
                 'notes' => $this->notes ?? null,
                 'expired_at' => Carbon::now()->copy()->addHours(24)
             ]);
+
+            // Check apakah user memasukan voucher
+            if ($this->voucherModel) {
+                // Update used count
+                $this->voucherModel->used_count = $this->voucherModel?->used_count + 1;
+                $this->voucherModel?->save();
+            }
 
             DB::commit();
             return $this->redirect(route('order.detail', ['uuidOrder' => $newOrder->uuid]), navigate: true);
