@@ -17,10 +17,24 @@ class Transaction extends Model
      * @var string
      */
     protected string $invoicePrefix = 'INV';
+    protected string $invoiceNumberField = 'transaction_number';
 
     protected $fillable = [
-        'transaction_number', 'order_id', 'user_id', 'gross_amount', 'admin_fee', 'net_amount', 'payment_type', 'qris_issuer', 'qris_content', 'acquirer', 'status', 'midtrans_order_id', 'midtrans_transaction_id', 'midtrans_token', 'qris_url', 'payment_url', 'currency', 'transaction_time', 'settlement_time', 'expiry_time',
+        'expiry_time', 'settlement_time', 'transaction_time', 'currency', 'payment_url', 'qris_url', 'midtrans_token', 'midtrans_transaction_id', 'midtrans_order_id', 'status', 'acquirer', 'qris_content', 'qris_issuer', 'payment_type', 'net_amount', 'admin_fee', 'gross_amount', 'user_id', 'order_id', 'transaction_number',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+
+
+            if (empty($model->{$model->getInvoiceNumberField()})) {
+                $model->{$model->getInvoiceNumberField()} = $model->generateInvoiceNumber();
+            }
+        });
+    }
 
     public function order(): BelongsTo
     {

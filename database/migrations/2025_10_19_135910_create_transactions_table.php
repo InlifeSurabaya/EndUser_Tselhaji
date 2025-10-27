@@ -11,7 +11,7 @@ return new class extends Migration {
         $table->id()->index();
         $table->string('transaction_number')->unique();
         $table->foreignId('order_id')->constrained()->onDelete('cascade');
-        $table->foreignId('user_id')->constrained()->onDelete('cascade');
+        $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
 
         // Amount details
         $table->decimal('gross_amount', 10, 2);
@@ -20,9 +20,6 @@ return new class extends Migration {
 
         // QRIS specific fields
         $table->string('payment_type')->default('qris'); // selalu qris
-        $table->string('qris_issuer')->nullable(); // gopay, shopeepay, dana, dll
-        $table->string('qris_content')->nullable(); // QR code content
-        $table->string('acquirer')->nullable(); // bank atau institution yang process
 
         // Transaction status khusus QRIS
         $table->enum('status', [
@@ -38,11 +35,6 @@ return new class extends Migration {
         $table->string('midtrans_transaction_id')->nullable()->unique(); // transaction_id dari Midtrans
         $table->string('midtrans_token')->nullable(); // snap token
 
-        // QRIS details
-        $table->text('qris_url')->nullable(); // URL QRIS image
-        $table->text('payment_url')->nullable(); // Deep link untuk mobile apps
-        $table->string('currency')->default('IDR');
-
         // QRIS specific timestamps
         $table->timestamp('transaction_time')->nullable();
         $table->timestamp('settlement_time')->nullable();
@@ -57,7 +49,6 @@ return new class extends Migration {
         $table->index('transaction_number');
         $table->index('midtrans_order_id');
         $table->index('midtrans_transaction_id');
-        $table->index('qris_issuer');
     });
   }
 
