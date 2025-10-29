@@ -200,11 +200,7 @@
                             </div>
                         @endif
                     </div>
-                    @if($order->user)
-                        <p class="text-sm text-[var(--color-neutral-500)]">
-                            Pesanan ini dibuat sebagai Tamu (Guest).
-                        </p>
-                    @endif
+
                 </div>
             </div>
 

@@ -39,7 +39,7 @@
                 <div>
                     <div class="flex justify-between items-center mb-2">
                         <label for="password" class="block text-sm font-medium text-neutral-700">Password</label>
-                        <a href="#" class="text-sm font-medium text-accent-600 hover:text-accent-800 transition">Lupa password?</a>
+                        <a href="{{ route('password.request') }}" wire:navigate class="text-sm font-medium text-accent-600 hover:text-accent-800 transition">Lupa password?</a>
                     </div>
                     <div class="relative">
                         <input wire:model="password" id="password" type="password" placeholder="Masukkan password Anda" required

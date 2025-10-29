@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Auth;
 
+use App\Enum\RoleEnum;
 use App\Models\User;
 use App\Traits\LogsDeveloper;
 use Illuminate\Support\Facades\Hash;
@@ -31,10 +32,12 @@ class Register extends Component
         $validatedData = $this->validate();
 
         try {
-            User::create([
+            $user = User::create([
                 'email' => $validatedData['email'],
                 'password' => Hash::make($validatedData['password'])
             ]);
+
+            $user->assignRole(RoleEnum::USER->value);
 
             LivewireAlert::title('Hore! Pendaftaran berhasil!')
                 ->toast()

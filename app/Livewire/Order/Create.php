@@ -33,6 +33,7 @@ class Create extends Component
     public $voucherDiscount = 0;
     public $finalPrice = 0;
     public $guestEmail;
+    public $phoneNumber;
 
     public function mount(): void
     {
@@ -45,6 +46,11 @@ class Create extends Component
                 ->timer(4000)
                 ->show();
             return;
+        }
+
+        // Init phone number
+        if (Auth::check()) {
+            $this->phoneNumber = Auth::user()->userProfile->phone;
         }
         $this->loadProduct();
     }
@@ -215,6 +221,7 @@ class Create extends Component
             if (!$user) {
                 $this->validate([
                     'guestEmail' => 'email|required',
+                    'phoneNumber' => 'numeric|required',
                 ]);
             }
 
@@ -230,7 +237,7 @@ class Create extends Component
                 'status' => OrderStatusEnum::PENDING->value,
                 'customer_name' => $user?->userProfile()?->fullname ?? null,
                 'customer_email' => $user?->email ?? $this->guestEmail,
-                'customer_phone' => $user?->userProfile()?->phone ?? null,
+                'customer_phone' => $this->phoneNumber,
                 'notes' => $this->notes ?? null,
                 'expired_at' => Carbon::now()->copy()->addHours(24)
             ]);
