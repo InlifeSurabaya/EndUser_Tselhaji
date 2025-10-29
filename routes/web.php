@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\Admin\DashboardAdmin;
+use App\Livewire\Auth\ForgotPassword;
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
 use App\Livewire\Dashboard;
@@ -11,10 +12,26 @@ use App\Livewire\Product\IndexProduct;
 use App\Livewire\User\UserProfile;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Transaction\HistoryTransaction;
+use App\Livewire\Auth\VerifyEmail;
+use App\Livewire\Auth\ResetPassword;
+
 
 // === AUTH ROUTE ===
 Route::get('/login', Login::class)->name('login');
 Route::get('/register', Register::class)->name('register');
+Route::get('/verify-email', VerifyEmail::class)->name('verification.notice');
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+
+    return back()->with('message', 'Verification link sent!');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+Route::get('/email/verify/{id}/{hash}', function (\Illuminate\Foundation\Auth\EmailVerificationRequest $request) {
+    $request->fulfill();
+
+    return redirect('/home');
+})->middleware(['auth', 'signed'])->name('verification.verify');
+Route::get('/forgot-password', ForgotPassword::class)->name('password.request');
+Route::get('/reset-password/{token}', ResetPassword::class)->name('password.reset');
 
 // === DASHBOARD ROUTE ===
 Route::get('/', Dashboard::class)->name('dashboard');
