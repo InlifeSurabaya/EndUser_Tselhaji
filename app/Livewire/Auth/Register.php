@@ -18,12 +18,18 @@ class Register extends Component
 {
     use LogsDeveloper;
 
+    #[Validate('required|string')]
+    public $name;
     #[Validate('required|email|unique:users,email')]
     public $email;
     #[Validate('required|confirmed|min:8|string')]
     public $password;
     #[Validate('required|string|min:8')]
     public $password_confirmation;
+    #[Validate('required|string|min:8')]
+    public $notelkom;
+    #[Validate('required|string|min:8')]
+    public $nowa;
 
 
     public function register()
@@ -33,7 +39,9 @@ class Register extends Component
         try {
             User::create([
                 'email' => $validatedData['email'],
-                'password' => Hash::make($validatedData['password'])
+                'password' => Hash::make($validatedData['password']),
+                'notelkom' => $validatedData['notelkom'],
+                'nowa' => $validatedData['nowa'],
             ]);
 
             LivewireAlert::title('Hore! Pendaftaran berhasil!')

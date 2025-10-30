@@ -37,7 +37,7 @@
                 </div>
 
                 <!-- [BARU] Input Email -->
-                <div>
+                <!-- <div>
                     <label for="email" class="block text-sm font-medium mb-2 text-[var(--color-neutral-700)]">
                         Email Pemesan
                     </label>
@@ -54,7 +54,7 @@
                                placeholder="email@anda.com">
                     </div>
                     @error('email') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
-                </div>
+                </div> -->
 
                 <!-- Tombol Cek Pesanan (dibuat full-width) -->
                 <button type="submit"

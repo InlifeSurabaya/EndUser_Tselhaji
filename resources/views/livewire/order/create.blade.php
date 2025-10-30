@@ -74,13 +74,35 @@
             </div>
 
             <div>
+              <label for="notelkom" class="block text-sm font-medium mb-2 text-[var(--color-neutral-700)]">
+                No Telkomsel
+              </label>
+              <div class="flex gap-2">
+                <input type="number" id="notelkom" wire:model="CheckNotelkom"
+                       class="py-3 px-4 block w-full border border-[var(--color-border)] rounded-lg text-sm focus:border-[var(--color-primary-600)] focus:ring-[var(--color-primary-600)]"
+                       placeholder="Masukkan Nomer Telkomsel">
+              </div>
+            </div>
+
+            <div>
+              <label for="nowa" class="block text-sm font-medium mb-2 text-[var(--color-neutral-700)]">
+                No Whatsapp
+              </label>
+              <div class="flex gap-2">
+                <input type="number" id="nowa" wire:model="CheckNowa"
+                       class="py-3 px-4 block w-full border border-[var(--color-border)] rounded-lg text-sm focus:border-[var(--color-primary-600)] focus:ring-[var(--color-primary-600)]"
+                       placeholder="Masukkan Nomer Whatsapp">
+              </div>
+            </div>
+
+            <!-- <div>
               <label for="notes" class="block text-sm font-medium mb-2 text-[var(--color-neutral-700)]">
                 Catatan (Opsional)
               </label>
               <textarea id="notes" wire:model.blur="notes" rows="3"
                         class="py-3 px-4 block w-full border border-[var(--color-border)] rounded-lg text-sm focus:border-[var(--color-primary-600)] focus:ring-[var(--color-primary-600)]"
                         placeholder="Catatan untuk pesanan Anda..."></textarea>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>

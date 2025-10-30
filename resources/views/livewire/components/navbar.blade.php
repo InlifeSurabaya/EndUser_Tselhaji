@@ -3,12 +3,16 @@
         <div class="flex justify-between items-center h-16">
             <div class="flex-shrink-0">
                 <a href="" wire:navigate class="flex items-center space-x-2">
-                    <svg class="h-8 w-auto text-primary-600" viewBox="0 0 1024 341.33" fill="currentColor"
+
+                    <!-- Gambar logo -->
+                    <img src="{{ asset('images/logo/logo-telkomsel-text.png') }}" alt="Logo" class="h-10 w-auto">
+                    
+                    <!-- <svg class="h-8 w-auto text-primary-600" viewBox="0 0 1024 341.33" fill="currentColor"
                          xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M1024 170.67c0 94.26-76.41 170.66-170.67 170.66s-170.66-76.4-170.66-170.66S764.1 0 853.33 0 1024 76.41 1024 170.67zm-170.67 85.33c-47.13 0-85.34-38.21-85.34-85.33s38.21-85.34 85.34-85.34 85.33 38.21 85.33 85.34-38.2 85.33-85.33 85.33zM512 170.67c0 94.26-76.41 170.66-170.67 170.66s-170.66-76.4-170.66-170.66S252.1 0 341.33 0 512 76.41 512 170.67zm-170.67 85.33c-47.13 0-85.34-38.21-85.34-85.33s38.21-85.34 85.34-85.34 85.33 38.21 85.33 85.34-38.2 85.33-85.33 85.33zM170.67 341.33C76.41 341.33 0 264.92 0 170.67S76.41 0 170.67 0v341.33z"/>
                     </svg>
-                    <span class="font-bold text-xl text-neutral-800">MyTelkomsel</span>
+                    <span class="font-bold text-xl text-neutral-800">MyTelkomsel</span> -->
                 </a>
             </div>
 
