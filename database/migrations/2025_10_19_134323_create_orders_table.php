@@ -26,7 +26,7 @@ return new class extends Migration {
                 OrderStatusEnum::SETTLEMENT->value,
                 OrderStatusEnum::EXPIRE->value,
                 OrderStatusEnum::CANCEL->value,
-                OrderStatusEnum::FAILURE->value,
+                OrderStatusEnum::DENY->value,
             ])->default(OrderStatusEnum::PENDING->value);
 
             // Customer details untuk Midtrans
