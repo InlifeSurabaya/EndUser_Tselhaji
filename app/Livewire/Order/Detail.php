@@ -41,10 +41,10 @@ class Detail extends Component
     {
         DB::beginTransaction();
         try {
-            $order = Order::with(['user', 'user', 'product'])->findOrFail($orderId);
+            $order = Order::with(['user', 'transaction', 'product'])->findOrFail($orderId);
 
             // Check apakah user sudah pernah klik
-            if ($order->url_midtrans) {
+            if ($order->url_midtrans && Carbon::parse($order->transaction->expiry_time)->isPast()) {
                 return redirect()->to($order->url_midtrans);
             }
 
