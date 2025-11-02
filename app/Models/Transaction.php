@@ -18,6 +18,8 @@ class Transaction extends Model
      */
     protected string $invoicePrefix = 'INV';
     protected string $invoiceNumberField = 'transaction_number';
+    protected int $randomLength = 8;
+
 
     protected $fillable = [
         'expiry_time', 'settlement_time', 'transaction_time', 'currency', 'payment_url', 'qris_url', 'midtrans_token', 'midtrans_transaction_id', 'midtrans_order_id', 'status', 'acquirer', 'qris_content', 'qris_issuer', 'payment_type', 'net_amount', 'admin_fee', 'gross_amount', 'user_id', 'order_id', 'transaction_number',

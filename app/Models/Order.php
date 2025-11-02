@@ -46,6 +46,8 @@ class Order extends Model
      */
     protected string $invoiceNumberField = 'order_number';
 
+    protected int $randomLength = 8;
+
     /**
      * Generate uuid otomatis
      * @return void

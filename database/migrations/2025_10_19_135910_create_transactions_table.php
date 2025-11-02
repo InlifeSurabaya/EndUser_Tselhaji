@@ -27,7 +27,7 @@ return new class extends Migration {
             TransactionStatusEnum::SETTLEMENT->value,
             TransactionStatusEnum::EXPIRE->value,
             TransactionStatusEnum::CANCEL->value,
-            TransactionStatusEnum::FAILURE->value,
+            TransactionStatusEnum::DENY->value,
         ])->default(TransactionStatusEnum::PENDING->value);
 
         // Midtrans specific fields untuk QRIS

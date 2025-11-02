@@ -3,12 +3,13 @@
 namespace App\Traits;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 trait GenerateNumberTrait
 {
     /**
      * Boot the trait.
-     * Automatically generate the invoice number when a new model is created.
+     * Automatically generate the number when a new model is created.
      */
     public static function bootGeneratesInvoiceNumber(): void
     {
@@ -21,43 +22,38 @@ trait GenerateNumberTrait
     }
 
     /**
-     * Generate a unique, sequential invoice number.
-     * Format: PREFIX/YYYYMM/SEQUENTIAL_NUMBER
-     * Example: INV/202510/0001
-     * The sequential number resets every month.
+     * Generate a unique, random number.
+     * Format: PREFIX/YYYYMM/RANDOM_STRING
+     * Example: INV/202510/A83B1N9X
+     * This function loops until a unique number is found.
      *
      * @return string
      */
     public function generateInvoiceNumber(): string
     {
         $prefix = $this->getInvoicePrefix();
-        $padding = $this->getInvoicePadding();
+        $length = $this->getRandomStringLength();
         $field = $this->getInvoiceNumberField();
         $datePart = date('Ym');
 
-        // Find the last record for the current month
-        $lastRecord = self::where($field, 'LIKE', "{$prefix}/{$datePart}/%")
-            ->orderBy($field, 'desc')
-            ->first();
+        do {
+            // Generate string acak (alpha-numeric) dan ubah ke huruf besar
+            $randomPart = Str::upper(Str::random($length));
 
-        $sequence = 1; // Default sequence
+            // Gabungkan menjadi nomor baru
+            $newNumber = "{$prefix}/{$datePart}/{$randomPart}";
 
-        if ($lastRecord) {
-            // Extract the sequence number from the last record
-            $lastNumber = explode('/', $lastRecord->{$field});
-            $lastSequence = (int) end($lastNumber);
-            $sequence = $lastSequence + 1;
-        }
+            // Cek apakah nomor ini sudah ada di database
+            $exists = self::where($field, $newNumber)->exists();
 
-        // Pad the sequence with leading zeros
-        $paddedSequence = str_pad($sequence, $padding, '0', STR_PAD_LEFT);
+        } while ($exists); // Ulangi jika nomor sudah ada
 
-        // Construct the final invoice number
-        return "{$prefix}/{$datePart}/{$paddedSequence}";
+        // Kembalikan nomor yang unik
+        return $newNumber;
     }
 
     /**
-     * Get the invoice number field name from the model.
+     * Get the number field name from the model.
      * Default: 'invoice_number'
      *
      * @return string
@@ -68,7 +64,7 @@ trait GenerateNumberTrait
     }
 
     /**
-     * Get the prefix for the invoice number from the model.
+     * Get the prefix for the number from the model.
      * Default: 'INV'
      *
      * @return string
@@ -79,13 +75,14 @@ trait GenerateNumberTrait
     }
 
     /**
-     * Get the padding length for the sequence from the model.
-     * Default: 4 (e.g., 0001)
+     * Get the length for the random string from the model.
+     * Default: 8
      *
      * @return int
      */
-    protected function getInvoicePadding(): int
+    protected function getRandomStringLength(): int
     {
-        return property_exists($this, 'invoicePadding') ? $this->invoicePadding : 4;
+        // Ganti nama properti dari 'invoicePadding' ke 'randomLength' jika Anda mau
+        return property_exists($this, 'randomLength') ? $this->randomLength : 8;
     }
 }

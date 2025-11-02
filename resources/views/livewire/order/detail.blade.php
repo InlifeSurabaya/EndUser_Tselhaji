@@ -24,7 +24,7 @@
             $statusText = 'Kedaluwarsa';
             $statusColorClasses = 'bg-[var(--color-primary-50)] text-[var(--color-primary-700)]';
             break;
-        case 'failure':
+        case 'deny':
             $statusText = 'Pembayaran Gagal';
             $statusColorClasses = 'bg-[var(--color-primary-50)] text-[var(--color-primary-700)]';
             break;
