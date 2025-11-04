@@ -48,8 +48,10 @@ class Create extends Component
             return;
         }
 
+        $user = Auth::user();
+
         // Init phone number
-        if (Auth::check()) {
+        if (Auth::check() && $user->userProfile && $user->userProfile->phone != null) {
             $this->phoneNumber = Auth::user()->userProfile->phone;
         }
         $this->loadProduct();
