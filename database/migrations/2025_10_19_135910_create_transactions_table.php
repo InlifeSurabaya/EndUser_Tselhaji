@@ -18,10 +18,8 @@ return new class extends Migration {
         $table->decimal('admin_fee', 10, 2)->default(0);
         $table->decimal('net_amount', 10, 2);
 
-        // QRIS specific fields
-        $table->string('payment_type')->default('qris'); // selalu qris
+        $table->string('payment_type')->default('qris');
 
-        // Transaction status khusus QRIS
         $table->enum('status', [
             TransactionStatusEnum::PENDING->value,
             TransactionStatusEnum::SETTLEMENT->value,
@@ -30,10 +28,6 @@ return new class extends Migration {
             TransactionStatusEnum::DENY->value,
         ])->default(TransactionStatusEnum::PENDING->value);
 
-        // Midtrans specific fields untuk QRIS
-        $table->string('midtrans_order_id')->nullable()->unique(); // order_id dari Midtrans
-        $table->string('midtrans_transaction_id')->nullable()->unique(); // transaction_id dari Midtrans
-        $table->string('midtrans_token')->nullable(); // snap token
 
         // QRIS specific timestamps
         $table->timestamp('transaction_time')->nullable();
@@ -47,8 +41,6 @@ return new class extends Migration {
         $table->index(['order_id', 'status']);
         $table->index(['status', 'expiry_time']);
         $table->index('transaction_number');
-        $table->index('midtrans_order_id');
-        $table->index('midtrans_transaction_id');
     });
   }
 

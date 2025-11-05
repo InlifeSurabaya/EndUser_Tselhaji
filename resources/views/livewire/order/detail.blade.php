@@ -34,7 +34,7 @@
     }
 @endphp
 
-<div class="max-w-3xl mx-auto my-7 px-4 sm:px-6 lg:px-8">
+<div class="max-w-3xl mx-auto my-7 px-4 sm:px-6 lg:px-8" x-data="{ showQrisModal: false }">
     <div class="space-y-6">
 
         @if ($order->status == 'pending')
@@ -91,14 +91,10 @@
                         </p>
                     </div>
 
-
-                    <button type="button" wire:click="createTransactionMidtrans({{$order->id}})"
+                    <button type="button"
+                            @click="showQrisModal = true"
                             class="w-full mt-6 py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-[var(--color-primary-600)] text-white hover:bg-[var(--color-primary-700)]">
-                        @if($order->url_midtrans)
-                            Bayar Sekarang
-                        @else
-                            Lanjutkan Pembayaran
-                        @endif
+                        Bayar Sekarang
                     </button>
                 </div>
             </div>
@@ -243,4 +239,39 @@
         </div>
 
     </div>
+
+    <div x-show="showQrisModal"
+         x-transition:enter="ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-xl bg-opacity-75 p-4"
+         style="display: none;">
+        <div @click.outside="showQrisModal = false"
+             class="relative w-full max-w-xs bg-white rounded-lg shadow-xl p-6">
+
+            <button type="button" @click="showQrisModal = false"
+                    class="absolute -top-3 -right-3 p-1 bg-[var(--color-neutral-700)] text-white rounded-full hover:bg-[var(--color-neutral-900)] focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+
+            <h3 class="text-lg font-semibold text-center text-[var(--color-neutral-900)] mb-4">
+                Scan untuk Membayar
+            </h3>
+
+            <img src="{{ asset('storage/' . $qris) }}" alt="QRIS Payment Code"
+                 class="w-full h-auto rounded-md border border-[var(--color-border)]">
+
+            <p class="text-xs text-center text-[var(--color-neutral-600)] mt-4">
+                Scan menggunakan aplikasi bank atau e-wallet Anda.
+            </p>
+        </div>
+    </div>
+
 </div>
