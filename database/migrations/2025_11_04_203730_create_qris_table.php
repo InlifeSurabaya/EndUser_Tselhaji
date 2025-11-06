@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('qris', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('file');
+            $table->tinyInteger('is_active')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });
