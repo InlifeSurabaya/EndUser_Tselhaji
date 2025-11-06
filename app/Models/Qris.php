@@ -11,5 +11,5 @@ class Qris extends Model
     /** @use HasFactory<\Database\Factories\QrisFactory> */
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['name'];
+    protected $fillable = ['file', 'is_active'];
 }

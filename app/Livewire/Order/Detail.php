@@ -31,7 +31,7 @@ class Detail extends Component
             ->firstOrFail();
 
         // Load qris admin
-        $this->qris = Qris::latest('created_at')->first();
+        $this->qris = Qris::where('is_active', 1)->latest('created_at')->first();
     }
 
 
