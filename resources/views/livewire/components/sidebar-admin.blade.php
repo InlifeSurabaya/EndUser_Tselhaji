@@ -42,10 +42,10 @@
         </a>
 
         {{-- Manajemen Produk --}}
-        <a href=""
+        <a href="{{ route('admin.manajemen-produk') }}"
            wire:navigate
            class="flex items-center gap-x-3.5 py-2 px-2.5 rounded-lg transition
-                {{ Route::is('manajemen-produk') ? 'bg-[var(--color-primary-600)] text-white' : 'hover:bg-neutral-800 hover:text-white' }}">
+                {{ Route::is('admin.manajemen-produk') ? 'bg-[var(--color-primary-600)] text-white' : 'hover:bg-neutral-800 hover:text-white' }}">
             <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
