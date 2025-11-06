@@ -5,7 +5,7 @@
         <nav class="flex basis-full items-center w-full mx-auto px-4 sm:px-6 md:px-8" aria-label="Global">
             <div class="me-5 lg:me-0 lg:hidden">
                 {{-- Logo untuk Tampilan Mobile --}}
-                <a wire:navigate class="flex-none text-xl font-semibold" href="#" aria-label="Brand">MyTelkomsel</a>
+                <a wire:navigate class="flex-none text-xl font-semibold" href="{{ route('admin.dashboard') }}" aria-label="Brand">MyTelkomsel</a>
             </div>
 
             <div class="w-full flex items-center justify-end gap-x-3 ms-auto sm:order-3">
