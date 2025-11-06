@@ -15,6 +15,7 @@ use App\Livewire\Transaction\HistoryTransaction;
 use App\Livewire\Auth\VerifyEmail;
 use App\Livewire\Auth\ResetPassword;
 use App\Livewire\Admin\ManajemenQris;
+use App\Livewire\Admin\ManajemenProduk;
 
 // === AUTH ROUTE ===
 Route::get('/login', Login::class)->name('login');
@@ -44,8 +45,11 @@ Route::get('/user-profile', UserProfile::class)->name('user.profile');
 
 
 // === ADMIN ROUTE ===
-Route::get('/admin', DashboardAdmin::class)->name('admin.dashboard');
-Route::get('/manajemen-qris', ManajemenQris::class)->name('admin.manajemen-qris');
+Route::middleware(['auth', 'role:superadmin'])->group(function () {
+    Route::get('/admin', DashboardAdmin::class)->name('admin.dashboard');
+    Route::get('/manajemen-qris', ManajemenQris::class)->name('admin.manajemen-qris');
+    Route::get('/manajemen-produk', ManajemenProduk::class)->name('admin.manajemen-produk');
+});
 
 // === PAYMENT ROUTE ===
 
