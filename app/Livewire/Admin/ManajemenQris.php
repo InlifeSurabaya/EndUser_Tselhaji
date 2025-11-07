@@ -18,6 +18,7 @@ class ManajemenQris extends Component
 
     #[Validate('image|max:5120')]
     public $newQris;
+
     public $currentQris;
 
     public function mount()
@@ -44,8 +45,8 @@ class ManajemenQris extends Component
 
         $this->reset('newQris');
 
-        LivewireAlert::title("Success")
-            ->text("Berhasil membuat QRIS!")
+        LivewireAlert::title('Success')
+            ->text('Berhasil membuat QRIS!')
             ->success()
             ->toast()
             ->position('top-end')

@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\CategoryCountryProduct;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,7 +18,7 @@ class ProductFactory extends Factory
     {
         return [
             'country_id' => fake()->numberBetween(1, 250),
-            'name' => 'Paket Data ' . fake()->words(2, true),
+            'name' => 'Paket Data '.fake()->words(2, true),
             'detail' => fake()->sentence(),
             'price' => fake()->numberBetween(10000, 200000),
             'quota_amount' => fake()->randomElement([5, 10, 15, 20, 50]),

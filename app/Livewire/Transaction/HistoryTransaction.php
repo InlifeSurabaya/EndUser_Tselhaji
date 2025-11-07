@@ -13,7 +13,6 @@ class HistoryTransaction extends Component
 {
     use WithPagination;
 
-
     public function render()
     {
         $user = Auth::user();

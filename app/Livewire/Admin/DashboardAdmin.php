@@ -16,9 +16,9 @@ class DashboardAdmin extends Component
     {
         // Check apakah qris ada yang aktif
         $isQrisActive = Qris::where('is_active', 1)->latest()->first();
-        if (!$isQrisActive) {
-            LivewireAlert::title("Wah")
-                ->text("Segera upload foto qris")
+        if (! $isQrisActive) {
+            LivewireAlert::title('Wah')
+                ->text('Segera upload foto qris')
                 ->warning()
                 ->withConfirmButton()
                 ->timer(30000)

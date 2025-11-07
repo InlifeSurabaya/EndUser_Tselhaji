@@ -19,13 +19,16 @@ class Login extends Component
 
     #[Validate('required|string|exists:users,email')]
     public $email;
+
     #[Validate('required|string')]
     public $password;
+
     #[Validate('boolean')]
     public $remember = false;
 
     /**
      * Login method
+     *
      * @return void|null
      */
     public function login()

@@ -10,9 +10,8 @@ trait LogsDeveloper
     /**
      * Mencatat exception dengan detail teknis lengkap ke channel 'critical_errors'.
      *
-     * @param \Throwable $e Exception yang ditangkap.
-     * @param array $additionalContext Informasi kustom tambahan dari developer.
-     * @return void
+     * @param  \Throwable  $e  Exception yang ditangkap.
+     * @param  array  $additionalContext  Informasi kustom tambahan dari developer.
      */
     protected function logErrorForDeveloper(\Throwable $e, array $additionalContext = []): void
     {
@@ -37,6 +36,6 @@ trait LogsDeveloper
         ];
 
         // Mengirim semua informasi ini ke channel log yang sudah kita siapkan
-        Log::channel('critical_errors')->error("An exception occurred", $context);
+        Log::channel('critical_errors')->error('An exception occurred', $context);
     }
 }

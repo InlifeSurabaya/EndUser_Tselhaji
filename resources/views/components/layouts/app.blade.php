@@ -7,7 +7,7 @@
     <title>{{ $title ?? 'Tsel Haji' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="h-full bg-neutral-50 font-sans antialiased">
+<body class="h-full bg-neutral-50 font-sans font-normal antialiased">
     <div class="flex flex-col min-h-screen">
         <livewire:components.navbar/>
 

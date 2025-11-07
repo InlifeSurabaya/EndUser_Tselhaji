@@ -26,8 +26,6 @@ trait GenerateNumberTrait
      * Format: PREFIX/YYYYMM/RANDOM_STRING
      * Example: INV/202510/A83B1N9X
      * This function loops until a unique number is found.
-     *
-     * @return string
      */
     public function generateInvoiceNumber(): string
     {
@@ -55,8 +53,6 @@ trait GenerateNumberTrait
     /**
      * Get the number field name from the model.
      * Default: 'invoice_number'
-     *
-     * @return string
      */
     protected function getInvoiceNumberField(): string
     {
@@ -66,8 +62,6 @@ trait GenerateNumberTrait
     /**
      * Get the prefix for the number from the model.
      * Default: 'INV'
-     *
-     * @return string
      */
     protected function getInvoicePrefix(): string
     {
@@ -77,8 +71,6 @@ trait GenerateNumberTrait
     /**
      * Get the length for the random string from the model.
      * Default: 8
-     *
-     * @return int
      */
     protected function getRandomStringLength(): int
     {

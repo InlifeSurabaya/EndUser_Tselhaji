@@ -20,19 +20,26 @@ use Livewire\Component;
 #[Title('New Order')]
 class Create extends Component
 {
-
     use LogsDeveloper;
 
     public $productId;
+
     public Product $product;
+
     public $notes;
 
     public $voucher;
+
     public ?Voucher $voucherModel = null;
+
     public $productDiscount = 0;
+
     public $voucherDiscount = 0;
+
     public $finalPrice = 0;
+
     public $guestEmail;
+
     public $phoneNumber;
 
     public function mount(): void
@@ -45,6 +52,7 @@ class Create extends Component
                 ->error()
                 ->timer(4000)
                 ->show();
+
             return;
         }
 
@@ -86,7 +94,7 @@ class Create extends Component
         }
 
         $originalPrice = $this->product->price;
-        Log::info('Original price: ' . $originalPrice);
+        Log::info('Original price: '.$originalPrice);
         $this->productDiscount = 0;
         $this->voucherDiscount = 0;
 
@@ -94,12 +102,12 @@ class Create extends Component
         if ($this->product->discount > 0) {
             Log::info('Hitung diskon product');
             $this->productDiscount = ($originalPrice * $this->product->discount) / 100;
-            Log::info('Hitung diskon product end ' . $this->productDiscount);
+            Log::info('Hitung diskon product end '.$this->productDiscount);
         }
 
         // Harga setelah diskon produk
         $priceAfterProductDiscount = $originalPrice - $this->productDiscount;
-        Log::info('Harga after product discount: ' . $priceAfterProductDiscount);
+        Log::info('Harga after product discount: '.$priceAfterProductDiscount);
 
         // 2. Hitung Diskon Voucher (jika ada voucher valid)
         if ($this->voucherModel) {
@@ -107,20 +115,20 @@ class Create extends Component
             if ($this->voucherModel->discount_type === DiscountTypeEnum::PERCENTEAGE->value) {
                 Log::info('Hitung voucher product percent');
                 $this->voucherDiscount = $priceAfterProductDiscount * ($this->voucherModel->discount_value / 100);
-                Log::info('Hitung voucher product percent end ' . $this->voucherDiscount);
+                Log::info('Hitung voucher product percent end '.$this->voucherDiscount);
             } elseif ($this->voucherModel->discount_type === DiscountTypeEnum::FIXED->value) {
                 Log::info('Hitung voucher product fixed');
                 $this->voucherDiscount = $this->voucherModel->discount_value;
-                Log::info('Hitung voucher product fixed end ' . $this->voucherDiscount);
+                Log::info('Hitung voucher product fixed end '.$this->voucherDiscount);
             }
             $this->voucherDiscount = min($this->voucherDiscount, $priceAfterProductDiscount);
-            Log::info('Hitung voucher product end kondisi ' . $this->voucherDiscount);
-            Log::info('Harga voucher product end kondisi price after product ' . $priceAfterProductDiscount);
+            Log::info('Hitung voucher product end kondisi '.$this->voucherDiscount);
+            Log::info('Harga voucher product end kondisi price after product '.$priceAfterProductDiscount);
 
         }
 
         $this->finalPrice = $priceAfterProductDiscount - $this->voucherDiscount;
-        Log::info('Final price: ' . $this->finalPrice);
+        Log::info('Final price: '.$this->finalPrice);
     }
 
     /**
@@ -138,13 +146,14 @@ class Create extends Component
                     ->error()
                     ->timer(3000)
                     ->show();
+
                 return;
             }
 
             $voucher = Voucher::where('code', $this->voucher)->first();
 
             // Validasi 1: Apa voucher ada?
-            if (!$voucher) {
+            if (! $voucher) {
                 $this->voucherModel = null;
                 $this->calculatePrices();
                 LivewireAlert::title('Oops! Voucher Nggak Ketemu')
@@ -152,11 +161,12 @@ class Create extends Component
                     ->error()
                     ->timer(4000)
                     ->show();
+
                 return;
             }
 
             // Validasi 2: Apa voucher aktif?
-            if (!$voucher->is_active) {
+            if (! $voucher->is_active) {
                 $this->voucherModel = null;
                 $this->calculatePrices();
                 LivewireAlert::title('Yah, Gagal')
@@ -164,6 +174,7 @@ class Create extends Component
                     ->error()
                     ->timer(4000)
                     ->show();
+
                 return;
             }
 
@@ -176,6 +187,7 @@ class Create extends Component
                     ->error()
                     ->timer(4000)
                     ->show();
+
                 return;
             }
 
@@ -188,9 +200,9 @@ class Create extends Component
                     ->error()
                     ->timer(4000)
                     ->show();
+
                 return;
             }
-
 
             $this->voucherModel = $voucher;
             $this->calculatePrices();
@@ -208,7 +220,6 @@ class Create extends Component
         }
     }
 
-
     /**
      * Membuat order baru
      */
@@ -220,7 +231,7 @@ class Create extends Component
         $user = Auth::user();
 
         try {
-            if (!$user) {
+            if (! $user) {
                 $this->validate([
                     'guestEmail' => 'email|required',
                     'phoneNumber' => 'numeric|required',
@@ -241,7 +252,7 @@ class Create extends Component
                 'customer_email' => $user?->email ?? $this->guestEmail,
                 'customer_phone' => $this->phoneNumber,
                 'notes' => $this->notes ?? null,
-                'expired_at' => Carbon::now()->copy()->addHours(24)
+                'expired_at' => Carbon::now()->copy()->addHours(24),
             ]);
 
             // Check apakah user memasukan voucher
@@ -252,6 +263,7 @@ class Create extends Component
             }
 
             DB::commit();
+
             return $this->redirect(route('order.detail', ['uuidOrder' => $newOrder->uuid]), navigate: true);
 
         } catch (\Throwable $e) {
@@ -259,7 +271,7 @@ class Create extends Component
             $this->logErrorForDeveloper($e, [
                 'context' => 'Gagal saat membuat order',
                 'product_id' => $this->productId ?? 'Not Set',
-                'voucher_input' => $this->voucher ?? 'Not Set'
+                'voucher_input' => $this->voucher ?? 'Not Set',
             ]);
 
             LivewireAlert::title('Terjadi Kesalahan')
