@@ -18,5 +18,4 @@ class CategoryCountryProduct extends Model
     {
         return $this->hasMany(Product::class);
     }
-
 }

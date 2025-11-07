@@ -31,12 +31,12 @@ class DatabaseSeeder extends Seeder
         $user = User::create([
             'email' => 'user@gmail.com',
             'password' => Hash::make('password'),
-            'email_verified_at' => now()
+            'email_verified_at' => now(),
         ]);
 
         $user->assignRole(RoleEnum::USER->value);
 
-        # Super admin account
+        // Super admin account
         $superAdmin = User::create([
             'email' => 'superadmin@gmail.com',
             'password' => Hash::make('password'),
