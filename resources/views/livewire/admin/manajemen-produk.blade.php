@@ -32,7 +32,7 @@
         <div class="md:col-span-3 flex items-center gap-2">
             <label for="perPage" class="text-sm text-neutral-700 shrink-0">Tampilkan</label>
 
-            <select id="perPage" wire:model.live="perPage"
+            <select id="perPage" wire:model.live.debounce.300ms="perPage"
                     class="h-10 px-3 bg-white border border-neutral-300 rounded-lg text-sm focus:border-accent-500 focus:ring-accent-500">
                 <option value="10">10</option>
                 <option value="20">20</option>
@@ -53,7 +53,7 @@
             </span>
 
             <input
-                wire:model.live="nameItem"
+                wire:model.live.debounce.300ms="nameItem"
                 type="text"
                 class="h-10 pl-10 pr-10 block w-full border border-neutral-300 rounded-lg text-sm
                    focus:border-blue-500 focus:ring-blue-500"
@@ -74,7 +74,7 @@
 
         {{-- Country Filter (kolom 3/12) --}}
         <div class="md:col-span-3">
-            <select wire:model.live="countryFilter"
+            <select wire:model.live.debounce.300ms="countryFilter"
                     class="h-10 px-3 bg-white border border-neutral-300 rounded-lg text-sm focus:border-accent-500 focus:ring-accent-500 w-full">
                 <option value="">Semua Negara</option>
                 @foreach($countries as $country)

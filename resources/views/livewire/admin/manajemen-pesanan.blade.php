@@ -27,7 +27,7 @@
             </div>
             <div>
                 <select
-                    wire:model.live="statusFilter"
+                    wire:model.live.debounce.300ms="statusFilter"
                     class="p-3 block w-full text-sm rounded-lg border-neutral-200 focus:border-accent-500 focus:ring-accent-500"
                 >
                     <option value="">Semua Status</option>
