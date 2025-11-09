@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->text('detail')->nullable();
             $table->decimal('harga');
-            $table->integer('quota_amount');
+            $table->float('quota_amount');
             $table->enum('quota_type', [
                 QuotaTypeEnum::GB->value,
                 QuotaTypeEnum::MB->value,
