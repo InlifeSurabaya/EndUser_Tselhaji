@@ -1,12 +1,13 @@
 <div class="flex flex-col pb-10">
 
   <div class="pb-5">
-    <h1 class="text-xl font-bold text-neutral-800 uppercase">{{ $subtitle }}</h2>
+    <h1 class="text-2xl font-bold text-neutral-800 uppercase">{{ $subtitle }}</h2>
+    <p class="text-sm text-neutral-600 mt-1">Informasi dari semua users.</p>
   </div>
 
   <div class="-m-1.5 overflow-x-auto">
     <div class="p-1.5 min-w-full inline-block align-middle">
-      <div class="border border-neutral-300 rounded-lg divide-y divide-neutral-400">
+      <div class="border border-neutral-300 rounded-2xl shadow-sm divide-y divide-neutral-400 bg-neutral-50">
         <div class="flex justify-between flex-wrap items-center px-4 py-3 gap-3">
           <button wire:click="createPage" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-accent-100 text-accent-700 hover:bg-accent-50 focus:outline-hidden focus:bg-accent-100 disabled:opacity-50 disabled:pointer-events-none">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5 lucide lucide-user-plus-icon lucide-user-plus">
@@ -41,7 +42,7 @@
         </div>
         <div class="overflow-hidden">
           <table wire:loading.class="opacity-50 pointer-events-none" class="min-w-full divide-y text-neutral-700">
-            <thead class="bg-neutral-200 font-bold border-0">
+            <thead class="bg-neutral-100 font-bold border-0">
               <tr>
                 <th scope="col" class="px-6 py-3 text-start text-xs uppercase">Name</th>
                 <th scope="col" class="px-6 py-3 text-start text-xs uppercase">Email</th>
@@ -50,7 +51,7 @@
                 <th scope="col" class="px-6 py-3 text-center text-xs uppercase">Action</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-neutral-400">
+            <tbody class="divide-y divide-neutral-400 bg-neutral-50">
               @foreach ($users as $user)
               <tr class="border-neutral-300">
                 <td class="px-6 py-3 whitespace-nowrap text-sm font-medium">{{ $user->userProfile->fullname ?? '-' }}</td>
@@ -95,19 +96,25 @@
           </table>
         </div>
 
-        <div class="mt-3">
+        <div class="my-2">
           {{ $users->links('livewire.components.admin-pagination') }}
         </div>
-
 
       </div>
     </div>
   </div>
-
-  <script>
-    Livewire.on('swal', e => {
-      Swal.fire(e.title, e.text, e.icon)
-    })
-  </script>
-
 </div>
+
+
+<script>
+  document.addEventListener('livewire:initialized', () => {
+    Livewire.on('swal', e => {
+      const data = e[0];
+      Swal.fire({
+        title: data.title,
+        text: data.text,
+        icon: data.icon
+      });
+    });
+  });
+</script>
