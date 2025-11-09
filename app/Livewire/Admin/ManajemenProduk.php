@@ -20,6 +20,9 @@ class ManajemenProduk extends Component
     protected $paginationTheme = 'tailwind';
 
     public $perPage = 10;
+    // Properti untuk search dan filter
+    public $nameItem;
+    public $countryFilter;
 
     public ?Product $editingProduct = null;
 
@@ -126,7 +129,7 @@ class ManajemenProduk extends Component
      */
     public function updateProduct()
     {
-        if (! $this->editingProduct) {
+        if (!$this->editingProduct) {
             LivewireAlert::title('Error')
                 ->text('Tidak ada produk yang dipilih untuk diupdate.')
                 ->error()->toast()->position('top-end')->show();
@@ -148,14 +151,7 @@ class ManajemenProduk extends Component
 
         try {
             $validatedData = $this->validate($rules);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            LivewireAlert::title('Data Tidak Valid')
-                ->text('Silakan periksa kembali data yang Anda masukkan.')
-                ->error()->toast()->position('top-end')->show();
-            throw $e;
-        }
 
-        try {
             $this->editingProduct->update([
                 'name' => $this->nameDetailProduct,
                 'detail' => $this->detailProduct,
@@ -175,11 +171,17 @@ class ManajemenProduk extends Component
             $this->clearForms();
             $this->dispatch('close-modal');
 
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            LivewireAlert::title('Data Tidak Valid')
+                ->text('Silakan periksa kembali data yang Anda masukkan.')
+                ->error()->toast()->position('top-end')->show();
+            throw $e;
         } catch (\Exception $e) {
             LivewireAlert::title('Gagal Update')
-                ->text('Terjadi kesalahan: '.$e->getMessage())
+                ->text('Terjadi kesalahan: ' . $e->getMessage())
                 ->error()->toast()->position('top-end')->show();
         }
+
     }
 
     /**
@@ -193,15 +195,7 @@ class ManajemenProduk extends Component
     {
         try {
             $validatedData = $this->validate();
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            LivewireAlert::title('Data Tidak Valid')
-                ->text('Silakan periksa kembali data yang Anda masukkan.')
-                ->error()->toast()->position('top-end')->show();
 
-            throw $e;
-        }
-
-        try {
             Product::create([
                 'country_id' => $validatedData['country_id'],
                 'name' => $validatedData['name'],
@@ -221,9 +215,54 @@ class ManajemenProduk extends Component
             $this->clearForms();
 
             $this->dispatch('close-modal');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            LivewireAlert::title('Data Tidak Valid')
+                ->text('Silakan periksa kembali data yang Anda masukkan.')
+                ->error()->toast()->position('top-end')->show();
+
+            throw $e;
         } catch (\Exception $e) {
             LivewireAlert::title('Gagal Menyimpan')
-                ->text('Terjadi kesalahan: '.$e->getMessage())
+                ->text('Terjadi kesalahan: ' . $e->getMessage())
+                ->error()->toast()->position('top-end')->show();
+        }
+    }
+
+    public function deleteProductAlert(int $productId)
+    {
+        LivewireAlert::title('Delete')
+            ->text('Apakah kamu yakin ingin menghapus produk ini?')
+            ->withConfirmButton()
+            ->onConfirm('deleteProduct', ['productId' => $productId])
+            ->warning()
+            ->withCancelButton()
+            ->show();
+    }
+
+    /**
+     * Delete produk pada db dengan soft deletes
+     * @param $data
+     * @return void
+     */
+    public function deleteProduct($data)
+    {
+        try {
+            $product = Product::find($data['productId']);
+
+            if (!$product) {
+                LivewireAlert::title('Ooops')
+                    ->text('Tidak ada produk yang dipilih.')
+                    ->error()->toast()->position('top-end')->show();
+                return;
+            }
+
+            $product->delete();
+            LivewireAlert::title('Berhasil')
+                ->text('Produk berhasil dihapus.')
+                ->success()->toast()->position('top-end')->show();
+        } catch (\Throwable $e) {
+            LivewireAlert::title('Gagal Menyimpan')
+                ->text('Terjadi kesalahan: ' . $e->getMessage())
                 ->error()->toast()->position('top-end')->show();
         }
     }
@@ -264,7 +303,19 @@ class ManajemenProduk extends Component
 
     public function render()
     {
-        $products = Product::with('country')->latest()->paginate($this->perPage);
+        $query = Product::with('country')->latest();
+
+        // Filter search by name
+        if ($this->nameItem) {
+            $query->where('name', 'like', '%' . $this->nameItem . '%');
+        }
+
+        // Filter search by country
+        if ($this->countryFilter) {
+            $query->where('country_id', $this->countryFilter);
+        }
+
+        $products = $query->paginate($this->perPage);
 
         return view('livewire.admin.manajemen-produk', [
             'products' => $products,
