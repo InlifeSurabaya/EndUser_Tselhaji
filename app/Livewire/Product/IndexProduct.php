@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Product;
 
-use App\Models\Order;
+use App\Models\CategoryCountryProduct;
 use App\Models\Product;
 use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Title;
@@ -17,6 +17,18 @@ class IndexProduct extends Component
     public ?Product $selectedProduct = null;
 
     public bool $showModal = false;
+
+    public $countries;
+
+    // Search properti
+    public $filterQuotaType;
+    public $filterQuotaAmount;
+    public $filterCountry;
+
+    public function mount()
+    {
+        $this->countries = CategoryCountryProduct::select(['id', 'name', 'country_code'])->get();
+    }
 
     /**
      * Menampilkan detail produk di modal
@@ -43,6 +55,15 @@ class IndexProduct extends Component
     {
         $products = Product::with('country:id,name,country_code')
             ->where('is_active', 1)
+            ->when($this->filterQuotaType, function ($filterQuotaType) {
+                return $filterQuotaType->where('quota_type', $this->filterQuotaType);
+            })
+            ->when($this->filterQuotaAmount, function ($filterQuotaAmount) {
+                return $filterQuotaAmount->where('quota_amount', $this->filterQuotaAmount);
+            })
+            ->when($this->filterCountry, function ($filterCountry) {
+                return $filterCountry->where('country_id', $this->filterCountry);
+            })
             ->latest()
             ->paginate(8);
 

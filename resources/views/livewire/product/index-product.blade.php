@@ -1,5 +1,69 @@
 <div class="max-w-7xl mx-auto my-7">
 
+    {{-- Section button start --}}
+    <div class="mb-6 grid grid-rows-2 gap-1 md:gap-2">
+        <div>
+            <h2 class="text-2xl font-bold text-neutral-800">
+                Pilih Paket Kuota
+            </h2>
+            <p class="text-neutral-600 mt-1">
+                Temukan paket yang paling sesuai untuk Anda.
+            </p>
+        </div>
+
+        <div class="w-full sm:w-auto flex flex-col sm:flex-row gap-4">
+
+            {{-- Filter Kuota (Jumlah) --}}
+            <div class="w-full sm:w-32">
+                <label for="filter-quota-amount" class="sr-only">Jumlah Kuota</label>
+                <input
+                    type="number"
+                    id="filter-quota-amount"
+                    wire:model.live.debounce.300ms="filterQuotaAmount"
+                    placeholder="Jumlah"
+                    class="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none p-3 block w-full text-sm rounded-lg border border-neutral-200 focus:border-accent-500 focus:ring-accent-500 transition"
+                />
+            </div>
+
+            {{-- Filter Kuota (Tipe) --}}
+            <div class="w-full sm:w-32 relative z-20">
+                <label for="filter-quota-type" class="sr-only">Tipe Kuota</label>
+                <select
+                    id="filter-quota-type"
+                    wire:model.live="filterQuotaType"
+                    class="p-3 pr-10 block w-full text-sm rounded-lg border border-neutral-200 focus:border-accent-500 focus:ring-accent-500 transition"
+                >
+                    <option value="">Tipe</option>
+                    <option value="gb">GB</option>
+                    <option value="mb">MB</option>
+                </select>
+            </div>
+
+            {{-- Filter Dropdown (Negara) --}}
+            <div class="w-full sm:min-w-[200px] relative z-10">
+                <label for="filter-country" class="sr-only">Filter Berdasarkan Negara</label>
+                <select
+                    id="filter-country"
+                    wire:model.live="filterCountry"
+                    class="p-3 pr-10 block w-full text-sm rounded-lg border border-neutral-200 focus:border-accent-500 focus:ring-accent-500 transition"
+                >
+                    <option value="">Semua Negara</option>
+                    @foreach ($countries ?? [] as $country)
+                        <option value="{{ $country->id }}">{{ $country->name }}</option>
+                    @endforeach
+                </select>
+
+                {{-- Indikator Loading --}}
+                <div wire:loading wire:target="filterCountry, filterQuotaAmount, filterQuotaType" class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <svg class="animate-spin h-5 w-5 text-accent-600" ... >
+                        ...
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- Section button end --}}
+
     {{-- Grid Container untuk Card Produk --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 ">
         @forelse ($products as $product)
