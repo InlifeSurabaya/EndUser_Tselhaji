@@ -3,6 +3,7 @@
 use App\Livewire\Admin\DashboardAdmin;
 use App\Livewire\Admin\ManajemenProduk;
 use App\Livewire\Admin\ManajemenQris;
+use App\Livewire\Admin\ManajemenVoucher;
 use App\Livewire\Auth\ForgotPassword;
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
@@ -17,6 +18,8 @@ use App\Livewire\Transaction\HistoryTransaction;
 use App\Livewire\User\UserProfile;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\ManajemenPesanan;
+
+
 // === AUTH ROUTE ===
 Route::get('/login', Login::class)->name('login');
 Route::get('/register', Register::class)->name('register');
@@ -49,6 +52,7 @@ Route::middleware(['auth', 'role:superadmin'])->group(function () {
     Route::get('/manajemen-qris', ManajemenQris::class)->name('admin.manajemen-qris');
     Route::get('/manajemen-produk', ManajemenProduk::class)->name('admin.manajemen-produk');
     Route::get('/manajemen-pesanan', ManajemenPesanan::class)->name('admin.manajemen-pesanan');
+    Route::get('/manajemen-voucher', ManajemenVoucher::class)->name('admin.manajemen-voucher');
 });
 
 // === PAYMENT ROUTE ===
