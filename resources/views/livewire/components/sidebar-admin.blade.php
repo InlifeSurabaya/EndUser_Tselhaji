@@ -71,6 +71,19 @@
             Manajemen Pesanan
         </a>
 
+        {{-- voucher --}}
+        <a href="{{ route('admin.manajemen-voucher') }}"
+           wire:navigate
+           class="flex items-center gap-x-3.5 py-2 px-2.5 rounded-lg transition
+                {{ Route::is('admin.manajemen-voucher') ? 'bg-[var(--color-primary-600)] text-white' : 'hover:bg-neutral-800 hover:text-white' }}">
+            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+                <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+            </svg>
+            Manajemen Voucher
+        </a>
+
         {{-- Pengguna --}}
         <a href=""
            wire:navigate
