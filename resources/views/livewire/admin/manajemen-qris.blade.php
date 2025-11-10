@@ -1,5 +1,4 @@
 <div class="p-4 sm:p-6 lg:p-8 space-y-6 bg-neutral-50 min-h-screen">
-
     <div class="mb-6">
         <h1 class="text-2xl font-bold text-neutral-900">Manajemen QRIS</h1>
         <p class="text-sm text-neutral-600">Perbarui atau unggah gambar QRIS statis yang akan ditampilkan di halaman pembayaran.</p>
