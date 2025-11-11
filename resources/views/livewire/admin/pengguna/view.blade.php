@@ -1,4 +1,9 @@
-<div class="bg-white border border-[var(--color-border)] rounded-2xl shadow-sm overflow-hidden" wire:loading.class="opacity-50 pointer-events-none">
+<div x-data="{ showFotoModal: false}"
+    @close-modal.window="
+        showFotoModal = false
+     "
+    class="mb-10 bg-white border border-[var(--color-border)] rounded-2xl shadow-sm overflow-hidden" wire:loading.class="opacity-50 pointer-events-none">
+    @role(\App\Enum\RoleEnum::SUPER_ADMIN->value)
     <div class="grid grid-cols-1 lg:grid-cols-3">
 
         <div class="lg:col-span-1 p-6 lg:border-r border-b lg:border-b-0 border-[var(--color-border)]">
@@ -30,7 +35,9 @@
                     </div>
                 </div>
 
-                <button class="inline-flex items-center gap-x-1 cursor-pointer text-sm font-medium text-[var(--color-primary-600)] hover:text-[var(--color-primary-700)] disabled:opacity-50 disabled:pointer-events-none" aria-haspopup="dialog" aria-expanded="false" aria-controls="hs-scale-animation-modal" data-hs-overlay="#hs-scale-animation-modal">
+                <button @click="showFotoModal = ! showFotoModal" type="button"
+                    wire:loading.attr="disabled"
+                    class="inline-flex items-center gap-x-1 cursor-pointer text-sm font-medium text-[var(--color-primary-600)] hover:text-[var(--color-primary-700)] disabled:opacity-50 disabled:pointer-events-none transition-all">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5 lucide lucide-eye-icon lucide-eye">
                         <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
                         <circle cx="12" cy="12" r="3" />
@@ -55,7 +62,7 @@
 
                     <div>
                         <p class="text-sm font-medium mb-1 text-[var(--color-neutral-600)]">Nama Lengkap</p>
-                        <p class="text-base font-medium text-[var(--color-neutral-800)]">{{ $fullname }}</p>
+                        <p class="text-base font-medium text-[var(--color-neutral-800)]">{{ $fullname ?: 'Belum diisi'}}</p>
                     </div>
 
                     <div>
@@ -124,4 +131,70 @@
         </div>
     </div>
 
-</div>
+    @endrole
+
+    {{-- Modal edit produk start --}}
+    <div
+        x-cloak
+        x-show="showFotoModal"
+        @keydown.escape.window="showFotoModal = false"
+        class="fixed inset-0 z-[9999] flex items-center justify-center"
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0">
+        <div class="absolute inset-0 bg-neutral-900/50 backdrop-blur-sm" x-show="showFotoModal"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"></div>
+
+        <div
+            class="bg-white rounded-2xl shadow-xl w-full max-w-none mx-5 relative overflow-hidden"
+            style="height: 90vh;"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 scale-90"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-90">
+            <div class="flex items-center justify-between p-2 border-b border-neutral-200 text-center">
+                <h2 class="text-xl font-semibold text-neutral-800">
+                    Lihat Foto
+                </h2>
+                <button @click="showFotoModal = false"
+                    class="text-neutral-500 hover:text-primary-600 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                        stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div>
+                <div class="p-4 space-y-5 max-h-[850vh] overflow-y-auto">
+
+                    <div wire:loading.remove wire:target="getProduct" class="space-y-5">
+                        <div class="flex justify-center items-center bg-neutral-50">
+                            @if ($avatar)
+                            <img src="{{ Storage::url($existingAvatar) }}" class="max-h-[80vh] max-w-full object-contain rounded-lg shadow-lg">
+                            @elseif ($existingAvatar)
+                            <img src="{{ Storage::url($existingAvatar) }}" alt="Avatar Pengguna" class="max-h-[80vh] max-w-full object-contain rounded-lg shadow-lg">
+                            @else
+                            <div class="text-center text-gray-500">Tidak ada foto tersedia</div>
+                            @endif
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+        {{-- Modal edit produk end --}}
+
+    </div>

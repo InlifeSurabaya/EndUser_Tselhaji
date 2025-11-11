@@ -1,4 +1,5 @@
-<div class="bg-white border border-[var(--color-border)] rounded-2xl shadow-sm overflow-hidden" wire:loading.class="opacity-50 pointer-events-none">
+<div class="mb-10 bg-white border border-[var(--color-border)] rounded-2xl shadow-sm overflow-hidden" wire:loading.class="opacity-50 pointer-events-none">
+    @role(\App\Enum\RoleEnum::SUPER_ADMIN->value)
     <div class="grid grid-cols-1 lg:grid-cols-3">
 
         <div class="lg:col-span-1 p-6 lg:border-r border-b lg:border-b-0 border-[var(--color-border)]">
@@ -179,4 +180,5 @@
         </div>
 
     </div>
+    @endrole
 </div>
