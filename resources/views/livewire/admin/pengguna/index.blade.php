@@ -37,51 +37,47 @@
             </button>
             @endrole
 
-            {{-- Country Filter (kolom 3/12) --}}
+            {{-- Role Filter (kolom 3/12) --}}
             <div class="md:col-span-3">
-              <select wire:model.live.debounce.300ms="countryFilter"
+              <select wire:model.live.debounce.300ms="roleFilter"
                 class="h-10 px-3 bg-white border border-neutral-300 rounded-lg text-sm focus:border-accent-500 focus:ring-accent-500 w-full">
                 <option value="">Pelanggan</option>
-                {{-- @foreach($countries as $country) --}}
-                <option value="">Vendor</option>
                 <option value="">Admin</option>
-                {{-- @endforeach --}}
+                <option value="">Vendor</option>
               </select>
             </div>
 
-              {{-- Search (kolom 6/12) --}}
-              <div class="md:col-span-6 relative">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <svg class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 18a7.5 7.5 0 006.15-3.35z" />
-                  </svg>
-                </span>
+            {{-- Search (kolom 6/12) --}}
+            <div class="span-6 relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <svg class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 18a7.5 7.5 0 006.15-3.35z" />
+                </svg>
+              </span>
 
-                <input
-                  wire:model.live.debounce.300ms="nameItem"
-                  type="text"
-                  class="h-10 pl-10 pr-10 block w-full border border-neutral-300 rounded-lg text-sm
+              <input
+                wire:model.live.debounce.300ms="nameItem"
+                type="text"
+                class="h-10 pl-10 pr-10 block w-full border border-neutral-300 rounded-lg text-sm
                    focus:border-blue-500 focus:ring-blue-500"
-                  placeholder="Cari user…">
+                placeholder="Cari user…">
 
-                {{-- @if ($nameItem) --}}
-                <button
-                  wire:click="$set('nameItem', '')"
-                  class="absolute inset-y-0 right-0 flex items-center pr-3 text-neutral-400 hover:text-neutral-700">
-                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-                {{-- @endif --}}
-              </div>
-
+              {{-- @if ($nameItem) --}}
+              <button
+                wire:click="$set('nameItem', '')"
+                class="absolute inset-y-0 right-0 flex items-center pr-3 text-neutral-400 hover:text-neutral-700">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+              {{-- @endif --}}
             </div>
+
           </div>
-
-
         </div>
+
         <div class="overflow-hidden">
           <table class="min-w-full divide-y text-neutral-700">
             <thead class="bg-neutral-100 font-bold border-0">
@@ -150,17 +146,3 @@
     </div>
   </div>
 </div>
-
-
-<script>
-  document.addEventListener('livewire:initialized', () => {
-    Livewire.on('swal', e => {
-      const data = e[0];
-      Swal.fire({
-        title: data.title,
-        text: data.text,
-        icon: data.icon
-      });
-    });
-  });
-</script>

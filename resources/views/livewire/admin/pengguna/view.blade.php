@@ -1,7 +1,5 @@
 <div x-data="{ showFotoModal: false}"
-    @close-modal.window="
-        showFotoModal = false
-     "
+    @close-modal.window="showFotoModal = false"
     class="mb-10 bg-white border border-[var(--color-border)] rounded-2xl shadow-sm overflow-hidden" wire:loading.class="opacity-50 pointer-events-none">
     @role(\App\Enum\RoleEnum::SUPER_ADMIN->value)
     <div class="grid grid-cols-1 lg:grid-cols-3">
@@ -105,32 +103,6 @@
         </div>
     </div>
 
-    <div id="hs-scale-animation-modal" class="hs-overlay hidden fixed top-0 start-0 size-full z-80 overflow-x-hidden overflow-y-auto pointer-events-none" role="dialog" tabindex="-1" aria-labelledby="hs-scale-animation-modal-label">
-        <div class="hs-overlay-animation-target hs-overlay-open:scale-100 hs-overlay-open:opacity-100 scale-95 opacity-0 ease-in-out transition-all duration-200 sm:max-w-2xl sm:w-full m-3 sm:mx-auto flex items-center justify-center">
-            <div class="w-full bg-white border border-gray-200 rounded-xl shadow-lg pointer-events-auto">
-                <div class="flex justify-between items-center p-3 border-b border-gray-200">
-                    <h3 id="hs-scale-animation-modal-label" class="font-bold text-gray-800">
-                        Foto Pengguna
-                    </h3>
-                    <button type="button" class="size-8 inline-flex justify-center items-center rounded-full hover:bg-gray-200" aria-label="Close" data-hs-overlay="#hs-scale-animation-modal">
-                        <svg class="size-4" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M18 6 6 18M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-                <div class="p-4 flex justify-center items-center bg-gray-50">
-                    @if ($avatar)
-                    <img src="{{ $avatar->temporaryUrl() }}" alt="Preview Avatar" class="max-h-[80vh] rounded-lg shadow-lg">
-                    @elseif ($existingAvatar)
-                    <img src="{{ Storage::url($existingAvatar) }}" alt="Avatar Pengguna" class="max-h-[80vh] rounded-lg shadow-lg">
-                    @else
-                    <div class="text-center text-gray-500">Tidak ada foto tersedia</div>
-                    @endif
-                </div>
-            </div>
-        </div>
-    </div>
-
     @endrole
 
     {{-- Modal edit produk start --}}
@@ -176,7 +148,7 @@
             </div>
 
             <div>
-                <div class="p-4 space-y-5 max-h-[850vh] overflow-y-auto">
+                <div class="p-4 space-y-5 max-h-[85vh] overflow-y-auto">
 
                     <div wire:loading.remove wire:target="getProduct" class="space-y-5">
                         <div class="flex justify-center items-center bg-neutral-50">

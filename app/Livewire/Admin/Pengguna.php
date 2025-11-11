@@ -2,16 +2,17 @@
 
 namespace App\Livewire\Admin;
 
-use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\UserProfile;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Support\Facades\Storage;
 use Livewire\WithFileUploads;
+use Illuminate\Validation\ValidationException;
+use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
 
 #[Title('Pengguna')]
 #[Layout('components.layouts.admin')]
@@ -20,178 +21,275 @@ class Pengguna extends Component
     use WithPagination, WithFileUploads;
 
     protected $paginationTheme = 'tailwind';
-    public $subtitle = "Manajemen Pengguna";
-    public $view = 'index';
 
-    // properti data user
-    public $user_id, $email, $fullname, $gender, $birth_date, $phone, $phoneWa, $address, $avatar, $role;
+    public string $subtitle = 'Manajemen Pengguna';
+    public string $view = 'index';
+
+    // Properti utama untuk paginasi dan filter
+    public int $perPage = 10;
+    public ?string $nameItem = null;
+    public ?string $roleFilter = null;
+
+    // Properti data user
+    public ?int $user_id = null;
+    public string $email = '';
+    public string $fullname = '';
+    public string $gender = '';
+    public ?string $birth_date = null;
+    public string $phone = '';
+    public string $phoneWa = '';
+    public string $address = '';
+    public ?string $role = null;
     public ?string $existingAvatar = null;
-    public $password, $password_confirmation;
 
-    public function updatingSearch()
-    {
-        $this->resetPage();
-    }
+    public $avatar;
+    public ?string $password = null;
+    public ?string $password_confirmation = null;
 
+    /**
+     * Render tampilan utama komponen pengguna.
+     */
     public function render()
     {
+        $query = User::with('userProfile')->latest();
+
+        // Filter pencarian berdasarkan nama
+        if ($this->nameItem) {
+            $query->whereHas(
+                'userProfile',
+                fn($q) =>
+                $q->where('fullname', 'like', '%' . $this->nameItem . '%')
+            );
+        }
+
+        // Filter berdasarkan role
+        if ($this->roleFilter) {
+            $query->where('role', $this->roleFilter);
+        }
+
+        $users = $query->paginate($this->perPage);
+
         return match ($this->view) {
             'create' => view('livewire.admin.pengguna.create'),
             'edit'   => view('livewire.admin.pengguna.edit'),
             'show'   => view('livewire.admin.pengguna.view'),
-            default  => view('livewire.admin.pengguna.index', [
-                'users' => User::with('userProfile')->paginate(10)
-            ]),
+            default  => view('livewire.admin.pengguna.index', compact('users')),
         };
     }
 
-    public function createPage()
+    /**
+     * Buka halaman tambah pengguna baru.
+     */
+    public function createPage(): void
     {
-        $this->resetInput();
+        $this->clearForms();
         $this->view = 'create';
     }
 
-    public function store()
+    /**
+     * Simpan pengguna baru ke database.
+     */
+    public function store(): void
     {
         $rules = [
             'email' => 'required|email|unique:users,email',
-            'fullname' => 'required',
+            'fullname' => 'required|string|max:255',
         ];
 
         if ($this->password) {
             $rules['password'] = 'required|min:6|confirmed';
         }
 
-        $this->validate($rules, [
+        $messages = [
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
-            'password.min' => 'Password minimal 8 karakter.',
-        ]);
+            'password.min' => 'Password minimal 6 karakter.',
+        ];
 
-        $user = User::create([
-            'email' => $this->email,
-            'password' => Hash::make($this->password),
-        ]);
+        try {
+            $this->validate($rules, $messages);
 
-        UserProfile::create([
-            'user_id' => $user->id,
-            'fullname' => $this->fullname,
-            'gender' => $this->gender,
-            'birth_date' => $this->birth_date,
-            'phone' => $this->phone,
-            'address' => $this->address,
-        ]);
+            $user = User::create([
+                'email' => $this->email,
+                'password' => Hash::make($this->password),
+            ]);
 
-        $this->resetInput();
-        $this->dispatch('swal', [
-            'title' => 'Berhasil!',
-            'text' => 'User berhasil ditambahkan.',
-            'icon' => 'success'
-        ]);
-        $this->view = 'index';
+            UserProfile::create([
+                'user_id' => $user->id,
+                'fullname' => $this->fullname,
+                'gender' => $this->gender,
+                'birth_date' => $this->birth_date,
+                'phone' => $this->phone,
+                'address' => $this->address,
+            ]);
+
+            LivewireAlert::title('Berhasil')
+                ->text('User berhasil ditambahkan.')
+                ->success()->toast()->position('top-end')->show();
+
+            $this->clearForms();
+            $this->view = 'index';
+        } catch (ValidationException $e) {
+            LivewireAlert::title('Data Tidak Valid')
+                ->text('Periksa kembali data yang Anda masukkan.')
+                ->error()->toast()->position('top-end')->show();
+            throw $e;
+        } catch (\Exception $e) {
+            LivewireAlert::title('Gagal Menyimpan')
+                ->text('Terjadi kesalahan: ' . $e->getMessage())
+                ->error()->toast()->position('top-end')->show();
+        }
     }
 
-    public function editPage($id)
+    /**
+     * Buka halaman edit pengguna.
+     */
+    public function editPage(int $id): void
     {
         $user = User::with('userProfile')->findOrFail($id);
 
         $this->user_id = $user->id;
         $this->email = $user->email;
-        $this->fullname = $user->userProfile->fullname;
-        $this->gender = $user->userProfile->gender;
-        $this->birth_date = $user->userProfile->birth_date;
-        $this->phone = $user->userProfile->phone;
-        $this->address = $user->userProfile->address;
-        $this->existingAvatar = $user->userProfile->avatar;
+
+        $profile = $user->userProfile;
+
+        $this->fullname = $profile->fullname ?? '';
+        $this->gender = $profile->gender ?? '';
+        $this->birth_date = $profile->birth_date ?? '';
+        $this->phone = $profile->phone ?? '';
+        $this->address = $profile->address ?? '';
+        $this->existingAvatar = $profile->avatar ?? null;
 
         $this->view = 'edit';
     }
 
-    public function update()
+    /**
+     * Update data pengguna di database.
+     */
+    public function update(): void
     {
         $rules = [
             'email' => 'required|email|unique:users,email,' . $this->user_id,
-            'fullname' => 'required',
+            'fullname' => 'required|string|max:255',
         ];
 
         if ($this->password) {
             $rules['password'] = 'min:6|confirmed';
         }
 
-        $this->validate($rules, [
+        $messages = [
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
-            'password.min' => 'Password minimal 8 karakter.',
-        ]);
+            'password.min' => 'Password minimal 6 karakter.',
+        ];
 
-        $user = User::findOrFail($this->user_id);
-        $user->update(['email' => $this->email]);
+        try {
+            $this->validate($rules, $messages);
 
-        if ($this->password) {
-            $user->update(['password' => Hash::make($this->password)]);
-        }
+            $user = User::findOrFail($this->user_id);
+            $user->update(['email' => $this->email]);
 
-        $user->userProfile->update([
-            'fullname' => $this->fullname,
-            'gender' => $this->gender,
-            'birth_date' => $this->birth_date,
-            'phone' => $this->phone,
-            'address' => $this->address,
-        ]);
-
-        // Penanganan unggahan avatar
-        if ($this->avatar) {
-            // Hapus avatar lama jika ada
-            if ($this->existingAvatar && Storage::disk('public')->exists($this->existingAvatar)) {
-                Storage::disk('public')->delete($this->existingAvatar);
+            if ($this->password) {
+                $user->update(['password' => Hash::make($this->password)]);
             }
 
-            // Simpan avatar baru ke folder public/avatars
-            $path = $this->avatar->store('avatars', 'public');
-            $user->userProfile->update(['avatar' => $path]);
-            $this->existingAvatar = $path;
-            $this->avatar = null;
-        }
+            $user->userProfile->update([
+                'fullname' => $this->fullname,
+                'gender' => $this->gender,
+                'birth_date' => $this->birth_date,
+                'phone' => $this->phone,
+                'address' => $this->address,
+            ]);
 
-        $this->resetInput();
-        $this->dispatch('swal', [
-            'title' => 'Berhasil!',
-            'text' => 'Data pengguna berhasil diperbarui.',
-            'icon' => 'success'
-        ]);
-        $this->view = 'index';
+            // Penanganan avatar
+            if ($this->avatar) {
+                if ($this->existingAvatar && Storage::disk('public')->exists($this->existingAvatar)) {
+                    Storage::disk('public')->delete($this->existingAvatar);
+                }
+
+                $path = $this->avatar->store('avatars', 'public');
+                $user->userProfile->update(['avatar' => $path]);
+                $this->existingAvatar = $path;
+                $this->avatar = null;
+            }
+
+            LivewireAlert::title('Berhasil')
+                ->text('Data pengguna berhasil diperbarui.')
+                ->success()->toast()->position('top-end')->show();
+
+            $this->clearForms();
+            $this->view = 'index';
+        } catch (ValidationException $e) {
+            LivewireAlert::title('Data Tidak Valid')
+                ->text('Periksa kembali data yang Anda masukkan.')
+                ->error()->toast()->position('top-end')->show();
+            throw $e;
+        } catch (\Exception $e) {
+            LivewireAlert::title('Gagal Update')
+                ->text('Terjadi kesalahan: ' . $e->getMessage())
+                ->error()->toast()->position('top-end')->show();
+        }
     }
 
-    public function showPage($id)
+    /**
+     * Menampilkan detail pengguna.
+     */
+    public function showPage(int $id): void
     {
         $user = User::with('userProfile')->findOrFail($id);
 
         $this->user_id = $user->id;
         $this->email = $user->email;
-        $this->fullname = $user->userProfile->fullname;
-        $this->gender = $user->userProfile->gender;
-        $this->birth_date = $user->userProfile->birth_date;
-        $this->phone = $user->userProfile->phone;
-        $this->phoneWa = $user->userProfile->phone;
-        $this->address = $user->userProfile->address;
-        $this->existingAvatar = $user->userProfile->avatar;
+
+        $profile = $user->userProfile;
+
+        $this->fullname = $profile->fullname ?? '';
+        $this->gender = $profile->gender ?? '';
+        $this->birth_date = $profile->birth_date ?? '';
+        $this->phone = $profile->phone ?? '';
+        $this->address = $profile->address ?? '';
+        $this->existingAvatar = $profile->avatar ?? null;
 
         $this->view = 'show';
     }
 
-    public function delete($id)
+    /**
+     * Menghapus data pengguna.
+     */
+    public function delete(int $id): void
     {
-        $user = User::findOrFail($id);
-        $user->userProfile()->delete();
-        $user->delete();
+        try {
+            $user = User::findOrFail($id);
+            $user->userProfile()->delete();
+            $user->delete();
 
-        $this->dispatch('swal', [
-            'title' => 'Terhapus!',
-            'text' => 'Data pengguna telah dihapus.',
-            'icon' => 'success'
-        ]);
+            LivewireAlert::title('Terhapus')
+                ->text('Data pengguna telah dihapus.')
+                ->success()->toast()->position('top-end')->show();
+        } catch (\Exception $e) {
+            LivewireAlert::title('Gagal Hapus')
+                ->text('Terjadi kesalahan: ' . $e->getMessage())
+                ->error()->toast()->position('top-end')->show();
+        }
     }
 
-    private function resetInput()
+    /**
+     * Reset form dan error validasi.
+     */
+    public function clearForms(): void
     {
-        $this->reset(['email', 'password', 'fullname', 'gender', 'birth_date', 'phone', 'address']);
+        $this->reset([
+            'email',
+            'password',
+            'password_confirmation',
+            'fullname',
+            'gender',
+            'birth_date',
+            'phone',
+            'address',
+            'avatar',
+            'existingAvatar',
+            'user_id'
+        ]);
+
+        $this->resetErrorBag();
     }
 }
