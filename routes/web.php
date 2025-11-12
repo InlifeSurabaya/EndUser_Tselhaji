@@ -1,20 +1,23 @@
 <?php
 
 use App\Livewire\Admin\DashboardAdmin;
+use App\Livewire\Admin\ManajemenProduk;
+use App\Livewire\Admin\ManajemenQris;
+use App\Livewire\Admin\ManajemenVoucher;
 use App\Livewire\Auth\ForgotPassword;
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
+use App\Livewire\Auth\ResetPassword;
+use App\Livewire\Auth\VerifyEmail;
 use App\Livewire\Dashboard;
 use App\Livewire\Order\CheckOrder;
 use App\Livewire\Order\Create as OrderCreate;
 use App\Livewire\Order\Detail as OrderDetail;
 use App\Livewire\Product\IndexProduct;
+use App\Livewire\Transaction\HistoryTransaction;
 use App\Livewire\User\UserProfile;
 use Illuminate\Support\Facades\Route;
-use App\Livewire\Transaction\HistoryTransaction;
-use App\Livewire\Auth\VerifyEmail;
-use App\Livewire\Auth\ResetPassword;
-use App\Livewire\Admin\ManajemenQris;
+use App\Livewire\Admin\ManajemenPesanan;
 use App\Livewire\Admin\Pengguna;
 
 // === AUTH ROUTE ===
@@ -43,11 +46,15 @@ Route::get('/product', IndexProduct::class)->name('index.product');
 // === USER ROUTE ===
 Route::get('/user-profile', UserProfile::class)->name('user.profile');
 
-
 // === ADMIN ROUTE ===
-Route::get('/admin', DashboardAdmin::class)->name('admin.dashboard');
-Route::get('/manajemen-qris', ManajemenQris::class)->name('admin.manajemen-qris');
-Route::get('/pengguna', Pengguna::class)->name('admin.pengguna');
+Route::middleware(['auth', 'role:superadmin'])->group(function () {
+    Route::get('/admin', DashboardAdmin::class)->name('admin.dashboard');
+    Route::get('/manajemen-qris', ManajemenQris::class)->name('admin.manajemen-qris');
+    Route::get('/manajemen-produk', ManajemenProduk::class)->name('admin.manajemen-produk');
+    Route::get('/manajemen-pesanan', ManajemenPesanan::class)->name('admin.manajemen-pesanan');
+    Route::get('/manajemen-voucher', ManajemenVoucher::class)->name('admin.manajemen-voucher');
+    Route::get('/pengguna', Pengguna::class)->name('admin.pengguna');
+});
 
 // === PAYMENT ROUTE ===
 
@@ -60,7 +67,7 @@ Route::get('/check-order', CheckOrder::class)->name('order.check');
 Route::middleware(
     [
         'auth',
-        'role:' . \App\Enum\RoleEnum::SUPER_ADMIN->value . '|' . \App\Enum\RoleEnum::USER->value
+        'role:'.\App\Enum\RoleEnum::SUPER_ADMIN->value.'|'.\App\Enum\RoleEnum::USER->value,
     ])
     ->group(function () {
         Route::get('/history', HistoryTransaction::class)->name('transaction.history');

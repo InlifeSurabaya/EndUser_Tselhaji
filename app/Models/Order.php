@@ -13,7 +13,7 @@ use Rinvex\Country\Country;
 
 class Order extends Model
 {
-    use HasFactory, SoftDeletes, GenerateNumberTrait;
+    use GenerateNumberTrait, HasFactory, SoftDeletes;
 
     protected $fillable = [
         'user_id', 'uuid',
@@ -36,13 +36,11 @@ class Order extends Model
 
     /**
      * Override prefix default dari trait.
-     * @var string
      */
     protected string $invoicePrefix = 'ORD';
 
     /**
      * Override nama kolom db
-     * @var string
      */
     protected string $invoiceNumberField = 'order_number';
 
@@ -50,6 +48,7 @@ class Order extends Model
 
     /**
      * Generate uuid otomatis
+     *
      * @return void
      */
     protected static function boot()

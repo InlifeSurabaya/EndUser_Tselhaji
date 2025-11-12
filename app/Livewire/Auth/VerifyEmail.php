@@ -13,7 +13,6 @@ use Livewire\Component;
 #[Layout('components.layouts.auth')]
 class VerifyEmail extends Component
 {
-
     public function sendVerification(Request $request)
     {
         $request->user()->sendEmailVerificationNotification();
@@ -30,6 +29,7 @@ class VerifyEmail extends Component
         Auth::logout();
         session()->invalidate();
         session()->regenerateToken();
+
         return $this->redirect(route('login'), navigate: true);
     }
 

@@ -9,6 +9,7 @@ use Livewire\Component;
 class Logout extends Component
 {
     use LogsDeveloper;
+
     /**
      * Mengeluarkan pengguna dari aplikasi.
      *
@@ -24,11 +25,11 @@ class Logout extends Component
 
             return $this->redirect(route('login'), navigate: true);
 
-
         } catch (\Throwable $e) {
             $this->logErrorForDeveloper($e);
         }
     }
+
     public function render()
     {
         return view('livewire.auth.logout');

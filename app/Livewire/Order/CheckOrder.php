@@ -10,7 +10,9 @@ use Livewire\Component;
 class CheckOrder extends Component
 {
     public $orderNumber;
+
     public $email;
+
     public $data;
 
     // Properti baru untuk melacak apakah pencarian sudah dilakukan

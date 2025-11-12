@@ -265,7 +265,7 @@
                 Scan untuk Membayar
             </h3>
 
-            <img src="{{ asset('storage/' . $qris) }}" alt="QRIS Payment Code"
+            <img wire:poll src="{{ asset('storage/' . $qris->file) }}" alt="QRIS Payment Code"
                  class="w-full h-auto rounded-md border border-[var(--color-border)]">
 
             <p class="text-xs text-center text-[var(--color-neutral-600)] mt-4">

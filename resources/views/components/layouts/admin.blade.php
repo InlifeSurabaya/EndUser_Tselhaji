@@ -8,8 +8,7 @@
     <title>{{ $title ?? 'Admin Dashboard' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-
-<body class="bg-neutral-100 font-sans antialiased">
+<body class="bg-neutral-100 font-sans   font-normal antialiased">
 
     {{-- Memanggil komponen header dari file terpisah --}}
     <livewire:components.header-admin />

@@ -1,9 +1,10 @@
 <?php
 
+use App\Enum\QuotaTypeEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Enum\QuotaTypeEnum;
+
 return new class extends Migration
 {
     /**
@@ -16,7 +17,7 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->text('detail')->nullable();
             $table->decimal('harga');
-            $table->integer('quota_amount');
+            $table->float('quota_amount');
             $table->enum('quota_type', [
                 QuotaTypeEnum::GB->value,
                 QuotaTypeEnum::MB->value,

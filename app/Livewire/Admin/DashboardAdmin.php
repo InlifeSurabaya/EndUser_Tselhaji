@@ -15,10 +15,10 @@ class DashboardAdmin extends Component
     public function mount()
     {
         // Check apakah qris ada yang aktif
-        $isQrisActive = Qris::latest('created_at')->first();
-        if (!$isQrisActive) {
-            LivewireAlert::title("Wah")
-                ->text("Segera upload foto qris")
+        $isQrisActive = Qris::where('is_active', 1)->latest()->first();
+        if (! $isQrisActive) {
+            LivewireAlert::title('Wah')
+                ->text('Segera upload foto qris')
                 ->warning()
                 ->withConfirmButton()
                 ->timer(30000)

@@ -2,7 +2,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
             <div class="flex-shrink-0">
-                <a href="" wire:navigate class="flex items-center space-x-2">
+                <a href="{{ route('dashboard') }}" wire:navigate class="flex items-center space-x-2">
                     <svg class="h-8 w-auto text-primary-600" viewBox="0 0 1024 341.33" fill="currentColor"
                          xmlns="http://www.w3.org/2000/svg">
                         <path

@@ -11,5 +11,5 @@ class Voucher extends Model
     /** @use HasFactory<\Database\Factories\VoucherFactory> */
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['code', 'discount_value', 'start_date', 'end_date', 'discount_type', 'usage_limit', 'used_count', 'is_active'];
+    protected $fillable = ['code', 'discount_value', 'start_date', 'end_date', 'discount_type', 'usage_limit', 'used_count', 'is_active', 'user_can_see'];
 }

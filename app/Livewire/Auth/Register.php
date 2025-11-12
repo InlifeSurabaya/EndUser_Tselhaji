@@ -21,11 +21,12 @@ class Register extends Component
 
     #[Validate('required|email|unique:users,email')]
     public $email;
+
     #[Validate('required|confirmed|min:8|string')]
     public $password;
+
     #[Validate('required|string|min:8')]
     public $password_confirmation;
-
 
     public function register()
     {
@@ -34,7 +35,7 @@ class Register extends Component
         try {
             $user = User::create([
                 'email' => $validatedData['email'],
-                'password' => Hash::make($validatedData['password'])
+                'password' => Hash::make($validatedData['password']),
             ]);
 
             $user->assignRole(RoleEnum::USER->value);
@@ -45,7 +46,6 @@ class Register extends Component
                 ->position('top-end')
                 ->timer(3000)
                 ->show();
-
 
             return $this->redirect(route('login'), navigate: true);
 

@@ -3,17 +3,13 @@
 namespace App\Livewire\User;
 
 use App\Models\User;
+use App\Models\UserProfile as ProfileModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
 use Livewire\Component;
-use App\Models\UserProfile as ProfileModel;
 use Livewire\WithFileUploads;
-
-
 
 class UserProfile extends Component
 {
@@ -21,16 +17,24 @@ class UserProfile extends Component
 
     // Properti untuk data profil
     public ?string $fullname = '';
+
     public ?string $gender = '';
+
     public ?string $birth_date = '';
+
     public ?string $phone = '';
+
     public ?string $address = '';
+
     public $avatar; // Untuk unggahan baru
+
     public ?string $existingAvatar = null; // Untuk menampilkan avatar saat ini
 
     // Properti untuk ganti kata sandi
     public ?string $current_password = '';
+
     public ?string $new_password = '';
+
     public ?string $new_password_confirmation = '';
 
     protected function profileRules(): array
@@ -116,7 +120,7 @@ class UserProfile extends Component
                 ->title('Profile berhasil diperbarui!')
                 ->success()
                 ->show();
-//            $this->dispatch('profileUpdated');
+            //            $this->dispatch('profileUpdated');
         } catch (\Exception $e) {
             LivewireAlert::title('Error')
                 ->timer(5000)
@@ -136,7 +140,7 @@ class UserProfile extends Component
         try {
             $user = $this->getUser();
             $user->update([
-                'password' => Hash::make($this->new_password)
+                'password' => Hash::make($this->new_password),
             ]);
 
             LivewireAlert::title('Success')
@@ -156,7 +160,7 @@ class UserProfile extends Component
 
     public function sendVerificationEmail()
     {
-        if (Auth::user() && !Auth::user()->hasVerifiedEmail()) {
+        if (Auth::user() && ! Auth::user()->hasVerifiedEmail()) {
             Auth::user()->sendEmailVerificationNotification();
 
             LivewireAlert::title('Success')
@@ -167,10 +171,10 @@ class UserProfile extends Component
         }
     }
 
-
     public function render()
     {
         $user = $this->getUser();
+
         return view('livewire.user.user-profile', ['user' => $user]);
     }
 }

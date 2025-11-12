@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('qris', function (Blueprint $table) {
-            $table->id();
-            $table->string('file');
-            $table->tinyInteger('is_active')->default(0);
-            $table->timestamps();
-            $table->softDeletes();
+        Schema::table('vouchers', function (Blueprint $table) {
+            $table->tinyInteger('user_can_see')->default(1)->after('is_active');
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('qris');
+        Schema::table('vouchers', function (Blueprint $table) {
+            $table->dropColumn('user_can_see');
+        });
     }
 };
