@@ -51,7 +51,7 @@ class Pengguna extends Component
      */
     public function render()
     {
-        $query = User::with('userProfile')->latest();
+        $query = User::with(['userProfile'])->latest();
 
         // Filter pencarian berdasarkan nama
         if ($this->nameItem) {
@@ -64,7 +64,9 @@ class Pengguna extends Component
 
         // Filter berdasarkan role
         if ($this->roleFilter) {
-            $query->where('role', $this->roleFilter);
+            $query->whereHas('roles', function($query) {
+                $query->where('name', $this->roleFilter);
+            });
         }
 
         $users = $query->paginate($this->perPage);

@@ -41,8 +41,8 @@
             <div class="md:col-span-3">
               <select wire:model.live.debounce.300ms="roleFilter"
                 class="h-10 px-3 bg-white border border-neutral-300 rounded-lg text-sm focus:border-accent-500 focus:ring-accent-500 w-full">
-                <option value="">Pelanggan</option>
-                <option value="">Admin</option>
+                <option value="{{ \App\Enum\RoleEnum::USER->value }}">Pelanggan</option>
+                <option value="{{ \App\Enum\RoleEnum::SUPER_ADMIN->value }}">Admin</option>
                 <option value="">Vendor</option>
               </select>
             </div>
