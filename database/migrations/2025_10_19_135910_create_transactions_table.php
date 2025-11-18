@@ -17,7 +17,6 @@ return new class extends Migration
 
             // Amount details
             $table->decimal('gross_amount', 10, 2);
-            $table->decimal('admin_fee', 10, 2)->default(0);
             $table->decimal('net_amount', 10, 2);
 
             $table->string('payment_type')->default('qris');
@@ -28,19 +27,19 @@ return new class extends Migration
                 TransactionStatusEnum::EXPIRE->value,
                 TransactionStatusEnum::CANCEL->value,
                 TransactionStatusEnum::DENY->value,
+                TransactionStatusEnum::PROSES->value,
             ])->default(TransactionStatusEnum::PENDING->value);
 
-            // QRIS specific timestamps
             $table->timestamp('transaction_time')->nullable();
             $table->timestamp('settlement_time')->nullable();
-            $table->timestamp('expiry_time')->nullable();
+            $table->string('payment_proof')->nullable();
+
             $table->timestamps();
             $table->softDeletes();
 
             // Indexes
             $table->index(['user_id', 'status']);
             $table->index(['order_id', 'status']);
-            $table->index(['status', 'expiry_time']);
             $table->index('transaction_number');
         });
     }

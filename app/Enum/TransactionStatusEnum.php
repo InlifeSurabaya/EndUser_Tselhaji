@@ -9,4 +9,5 @@ enum TransactionStatusEnum: string
     case EXPIRE = 'expire';
     case CANCEL = 'cancel';
     case DENY = 'deny';
+    case PROSES = 'proses';
 }

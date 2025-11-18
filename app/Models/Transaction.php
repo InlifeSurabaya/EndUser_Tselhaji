@@ -22,7 +22,7 @@ class Transaction extends Model
     protected int $randomLength = 8;
 
     protected $fillable = [
-        'expiry_time', 'settlement_time', 'transaction_time', 'currency', 'payment_url', 'qris_url', 'midtrans_token', 'midtrans_transaction_id', 'midtrans_order_id', 'status', 'acquirer', 'qris_content', 'qris_issuer', 'payment_type', 'net_amount', 'admin_fee', 'gross_amount', 'user_id', 'order_id', 'transaction_number',
+        'expiry_time', 'settlement_time', 'transaction_time', 'currency', 'payment_url', 'qris_url', 'midtrans_token', 'midtrans_transaction_id', 'midtrans_order_id', 'status', 'acquirer', 'qris_content', 'qris_issuer', 'payment_type', 'net_amount', 'admin_fee', 'gross_amount', 'user_id', 'order_id', 'transaction_number', 'payment_proof',
     ];
 
     protected static function boot()

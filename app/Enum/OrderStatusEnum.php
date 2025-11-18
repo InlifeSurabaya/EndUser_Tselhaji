@@ -9,4 +9,5 @@ enum OrderStatusEnum: string
     case EXPIRE = 'expire';
     case CANCEL = 'cancel';
     case DENY = 'DENY';
+    case PROSES = 'proses';
 }

@@ -47,6 +47,7 @@ class Create extends Component
     {
         $this->productId = Session::get('selected_product_id');
 
+        Log::info('create ' . $this->productId);
         if (empty($this->productId)) {
             LivewireAlert::title('Oops')
                 ->text('Product tidak ditemukan.')

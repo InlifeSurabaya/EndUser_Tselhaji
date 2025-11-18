@@ -87,6 +87,7 @@
                                                 'success' => 'bg-success/10 text-success',
                                                 'pending' => 'bg-warning/10 text-warning',
                                                 'failed', 'expired', 'cancelled' => 'bg-primary-100 text-primary-700',
+                                                'proses' => 'bg-blue-100 text-blue-800',
                                                 default => 'bg-neutral-100 text-neutral-700',
                                             };
                                         @endphp
@@ -135,11 +136,13 @@
         @keydown.escape.window="showDetailModal = false; $wire.closeModal()"
         class="fixed inset-0 z-50 flex items-center justify-center"
     >
+        {{-- Backdrop --}}
         <div x-show="showDetailModal" x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
              x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
              x-transition:leave-end="opacity-0" class="absolute inset-0 bg-neutral-900/50 backdrop-blur-sm"></div>
 
+        {{-- Modal Content --}}
         <div
             x-show="showDetailModal"
             x-transition:enter="transition ease-out duration-300"
@@ -151,6 +154,7 @@
             class="bg-white rounded-2xl shadow-xl w-full max-w-2xl relative overflow-hidden"
             @click.away="showDetailModal = false; $wire.closeModal()"
         >
+            {{-- Header --}}
             <div class="flex items-center justify-between p-6 border-b border-neutral-200">
                 <h2 class="text-xl font-semibold text-neutral-800">
                     Detail Pesanan
@@ -164,8 +168,10 @@
                 </button>
             </div>
 
+            {{-- Body --}}
             <div class="p-6 max-h-[70vh] overflow-y-auto">
 
+                {{-- Loading State --}}
                 <div wire:loading.block wire:target="getOrderDetails" class="animate-pulse space-y-5">
                     <div class="h-5 bg-neutral-200 rounded w-1/3"></div>
                     <div class="space-y-3">
@@ -183,6 +189,7 @@
                     @if($selectedOrder)
                         <div class="space-y-6">
 
+                            {{-- Section 1: Rincian Pesanan --}}
                             <div>
                                 <h3 class="text-lg font-semibold text-neutral-800 mb-3">Rincian Pesanan</h3>
                                 <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
@@ -207,12 +214,13 @@
 
                             <hr class="border-neutral-200"/>
 
+                            {{-- Section 2: Pelanggan --}}
                             <div>
                                 <h3 class="text-lg font-semibold text-neutral-800 mb-3">Pelanggan</h3>
                                 <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
                                     <div class="text-sm">
                                         <dt class="font-medium text-neutral-600">Nama:</dt>
-                                        <dd class="text-neutral-800">{{ $selectedOrder->customer_name }}</dd>
+                                        <dd class="text-neutral-800">{{ $selectedOrder->customer_name ?? 'Tamu' }}</dd>
                                     </div>
                                     <div class="text-sm">
                                         <dt class="font-medium text-neutral-600">Email:</dt>
@@ -231,6 +239,7 @@
 
                             <hr class="border-neutral-200"/>
 
+                            {{-- Section 3: Produk & Pembayaran --}}
                             <div>
                                 <h3 class="text-lg font-semibold text-neutral-800 mb-3">Produk & Pembayaran</h3>
                                 <div class="flow-root">
@@ -249,9 +258,7 @@
                                     </div>
                                     @if($selectedOrder->voucher_id)
                                         <div class="flex justify-between">
-                                            <dt class="text-neutral-600">Diskon ({{ $selectedOrder->voucher?->code }}
-                                                ):
-                                            </dt>
+                                            <dt class="text-neutral-600">Diskon ({{ $selectedOrder->voucher?->code }}):</dt>
                                             <dd class="font-medium text-primary-600">-
                                                 IDR {{ number_format($selectedOrder->discount_amount, 0, ',', '.') }}</dd>
                                         </div>
@@ -264,6 +271,39 @@
                                 </dl>
                             </div>
 
+                            {{-- Section 4: Bukti Pembayaran (BARU) --}}
+                            @if($selectedOrder->transaction->payment_proof)
+                                <hr class="border-neutral-200"/>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-neutral-800 mb-3">Bukti Pembayaran</h3>
+                                    <div class="bg-neutral-50 border border-neutral-200 rounded-lg p-4">
+                                        <div class="flex flex-col items-center">
+                                            {{-- Thumbnail Gambar --}}
+                                            <div class="relative group cursor-pointer overflow-hidden rounded-md border border-neutral-300 shadow-sm">
+                                                <a href="{{ asset('storage/' . $selectedOrder->transaction->payment_proof) }}" target="_blank">
+                                                    <img
+                                                        src="{{ asset('storage/' . $selectedOrder->transaction->payment_proof) }}"
+                                                        alt="Bukti Pembayaran"
+                                                        class="max-h-64 w-auto object-contain hover:scale-105 transition-transform duration-300"
+                                                    >
+                                                </a>
+                                            </div>
+
+                                            {{-- Link Text --}}
+                                            <a href="{{ asset('storage/' . $selectedOrder->transaction->payment_proof) }}"
+                                               target="_blank"
+                                               class="mt-3 inline-flex items-center gap-1 text-sm font-medium text-primary-600 hover:text-primary-700 hover:underline">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                                </svg>
+                                                Lihat Ukuran Penuh
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+
+                            {{-- Section 5: Transaksi (Opsional) --}}
                             @if($selectedTransaction)
                                 <hr class="border-neutral-200"/>
                                 <div>
@@ -299,6 +339,7 @@
 
             </div>
 
+            {{-- Footer --}}
             <div class="flex justify-end gap-3 p-6 border-t border-neutral-200 bg-neutral-50 rounded-b-2xl">
                 <button
                     type="button"
