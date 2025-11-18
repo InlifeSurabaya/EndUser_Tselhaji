@@ -22,6 +22,7 @@ class Create extends Component
 {
     use LogsDeveloper;
 
+    public $availableVouchers;
     public $productId;
 
     public Product $product;
@@ -62,6 +63,16 @@ class Create extends Component
         if (Auth::check() && $user->userProfile && $user->userProfile->phone != null) {
             $this->phoneNumber = Auth::user()->userProfile->phone;
         }
+        // Load voucher
+        $this->availableVouchers = Voucher::where('is_active', 1)
+            ->where('user_can_see', 1)
+            ->whereColumn('used_count', '<', 'usage_limit')
+            ->where('start_date', '<=', Carbon::now())
+            ->where('end_date', '>=', Carbon::now())
+            ->select(['id', 'code', 'discount_value', 'discount_type'])
+            ->get();
+
+        // Load product
         $this->loadProduct();
     }
 

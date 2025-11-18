@@ -7,6 +7,7 @@ use App\Models\UserProfile as ProfileModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -121,10 +122,16 @@ class UserProfile extends Component
                 ->success()
                 ->show();
             //            $this->dispatch('profileUpdated');
+        } catch (ValidationException $e) {
+            LivewireAlert::title('Error')
+                ->timer(5000)
+                ->title($e->getMessage())
+                ->error()
+                ->show();
         } catch (\Exception $e) {
             LivewireAlert::title('Error')
                 ->timer(5000)
-                ->title('Terjadi kesalahan saat memperbarui profil.')
+                ->title('Terjadi kesalahan saat memperbarui profil. ')
                 ->error()
                 ->show();
         }

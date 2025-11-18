@@ -52,6 +52,50 @@
                             </div>
                         @endguest
 
+                            @if($availableVouchers->count() > 0)
+                                <div class="pt-2">
+                                    <label class="block text-sm font-medium mb-2 text-[var(--color-neutral-700)]">
+                                        Voucher Tersedia
+                                    </label>
+
+                                    {{-- Kontainer scroll horizontal --}}
+                                    <div class="flex overflow-x-auto py-2 gap-3" style="scrollbar-width: thin;">
+                                        @foreach($availableVouchers as $v)
+                                            {{--
+                                              Setiap voucher punya state Alpine-nya sendiri
+                                              'code' -> untuk menyimpan kode voucher
+                                              'copied' -> untuk state tombol "Salin" / "Tersalin"
+                                            --}}
+                                            <div x-data="{ code: '{{ $v->code }}', copied: false }"
+                                                 class="flex-shrink-0 flex items-center gap-2 border border-dashed border-[var(--color-primary-600)] bg-[var(--color-primary-50)] rounded-lg pl-3 pr-2 py-1.5">
+
+                                                {{-- Nama Kode Voucher --}}
+                                                <span class="text-sm font-medium text-[var(--color-primary-700)]">
+                                                    {{ $v->code }}
+                                                </span>
+
+                                                {{-- Tombol Salin --}}
+                                                <button type
+                                                        ="button"
+                                                        @click="
+                                    navigator.clipboard.writeText(code);
+                                    $wire.set('voucher', code);
+                                    copied = true;
+                                    setTimeout(() => copied = false, 2000);
+                                "
+                                                        class="text-xs font-semibold rounded-md px-2 py-1 transition-all"
+                                                        {{-- Ganti style tombol saat 'copied' == true --}}
+                                                        :class="copied ? 'bg-green-500 text-white' : 'bg-white text-[var(--color-primary-700)] hover:bg-gray-50'"
+                                                >
+                                                    <span x-show="!copied">Salin</span>
+                                                    <span x-show="copied" style="display: none;">Tersalin!</span>
+                                                </button>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+
                         <div>
                             <label for="phoneNumber"
                                    class="block text-sm font-medium mb-2 text-[var(--color-neutral-700)]">
@@ -63,6 +107,7 @@
                             @error('phoneNumber')
                             <span class="text-xs text-red-500 mt-1">{{ $message }}</span> @enderror
                         </div>
+
                         <div>
 
                             <label for="voucher" class="block text-sm font-medium mb-2 text-[var(--color-neutral-700)]">

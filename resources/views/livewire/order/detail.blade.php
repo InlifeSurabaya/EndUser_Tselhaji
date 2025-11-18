@@ -91,11 +91,17 @@
                         </p>
                     </div>
 
-                    <button type="button"
-                            @click="showQrisModal = true"
-                            class="w-full mt-6 py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-[var(--color-primary-600)] text-white hover:bg-[var(--color-primary-700)]">
-                        Bayar Sekarang
-                    </button>
+                    @empty($qris == null)
+                        <button type="button"
+                                @click="showQrisModal = true"
+                                class="w-full mt-6 py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-[var(--color-primary-600)] text-white hover:bg-[var(--color-primary-700)]">
+                            Bayar Sekarang
+                        </button>
+                    @endempty
+
+                    @empty($qris != null)
+                        <p class="my-4 text-[var(--color-primary-800)] font-bold text-xl">Cek secara berkala, QR Qris akan muncul.</p>
+                    @endempty
                 </div>
             </div>
         @else
@@ -265,13 +271,12 @@
                 Scan untuk Membayar
             </h3>
 
-            <img wire:poll src="{{ asset('storage/' . $qris->file) }}" alt="QRIS Payment Code"
-                 class="w-full h-auto rounded-md border border-[var(--color-border)]">
+                <img wire:poll src="{{ asset('storage/' . $qris?->file) }}" alt="QRIS Payment Code"
+                     class="w-full h-auto rounded-md border border-[var(--color-border)]">
 
             <p class="text-xs text-center text-[var(--color-neutral-600)] mt-4">
                 Scan menggunakan aplikasi bank atau e-wallet Anda.
             </p>
         </div>
     </div>
-
 </div>

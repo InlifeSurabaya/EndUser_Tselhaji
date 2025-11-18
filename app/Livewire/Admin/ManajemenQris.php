@@ -26,6 +26,12 @@ class ManajemenQris extends Component
         $this->currentQris = Qris::where('is_active', 1)->latest()->first();
     }
 
+    public function clearPreview()
+    {
+        $this->reset('newQris');
+        $this->dispatch('clear-file-input');
+    }
+
     // Fungsi untuk membuat QRIS baru.
     public function save()
     {

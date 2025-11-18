@@ -16,14 +16,24 @@ class DashboardAdmin extends Component
     {
         // Check apakah qris ada yang aktif
         $isQrisActive = Qris::where('is_active', 1)->latest()->first();
-        if (! $isQrisActive) {
+        if (!$isQrisActive) {
             LivewireAlert::title('Wah')
                 ->text('Segera upload foto qris')
                 ->warning()
                 ->withConfirmButton()
+                ->onConfirm('goToQris')
                 ->timer(30000)
                 ->show();
         }
+    }
+
+    /**
+     * Method untuk meneruskan ke halaman qris
+     * @return void
+     */
+    public function goToQris()
+    {
+        return $this->redirect(route('admin.manajemen-qris'), navigate: true);
     }
 
     public function render()
