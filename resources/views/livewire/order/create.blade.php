@@ -103,7 +103,7 @@
                             </label>
                             <input type="tel" id="phoneNumber" wire:model.blur="phoneNumber"
                                    class="py-3 px-4 block w-full border border-[var(--color-border)] rounded-lg text-sm focus:border-[var(--color-primary-600)] focus:ring-[var(--color-primary-600)]"
-                                   placeholder="Contoh: 08123456789">
+                                   placeholder="Contoh: 08123456789" required>
                             @error('phoneNumber')
                             <span class="text-xs text-red-500 mt-1">{{ $message }}</span> @enderror
                         </div>

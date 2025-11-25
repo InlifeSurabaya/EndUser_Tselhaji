@@ -9,6 +9,7 @@ use App\Models\Qris;
 use App\Models\Transaction;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Validate;
@@ -74,7 +75,15 @@ class Detail extends Component
                 ->withConfirmButton()
                 ->show();
 
-        } catch (\Throwable $e) {
+        } catch (ValidationException $e) {
+            LivewireAlert::title('Error')
+                ->text($e->getMessage())
+                ->error()
+                ->timer(60000)
+                ->toast()
+                ->show();
+        }
+        catch (\Throwable $e) {
             Log::info('Error when create transaction in detail order ' . $e->getMessage());
         }
     }
