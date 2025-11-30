@@ -94,7 +94,7 @@ class Pengguna extends Component
     public function store(): void
     {
         $rules = [
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required|email',
             'fullname' => 'required|string|max:255',
         ];
 
@@ -114,6 +114,8 @@ class Pengguna extends Component
                 'email' => $this->email,
                 'password' => Hash::make($this->password),
             ]);
+
+            $user->assignRole($this->role);
 
             UserProfile::create([
                 'user_id' => $user->id,

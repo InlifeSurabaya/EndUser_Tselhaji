@@ -101,8 +101,8 @@
                             class="block text-sm font-medium mb-1 text-[var(--color-neutral-700)]">Role</label>
                         <select id="role" wire:model="role"
                             class="w-full py-2.5 px-3 border border-[var(--color-neutral-300)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary-500)] focus:border-[var(--color-primary-500)]">
-                            <option value="user">User</option>
-                            <option value="admin">Admin</option>
+                            <option value="{{ \App\Enum\RoleEnum::USER->value }}">User</option>
+                            <option value="{{ \App\Enum\RoleEnum::SUPER_ADMIN->value }}">Admin</option>
                         </select>
                         @error('role')
                         <span class="text-sm text-[var(--color-error)]">{{ $message }}</span> @enderror

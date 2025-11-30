@@ -125,10 +125,9 @@
                       cancelButtonText: 'Batal'
                     }).then((r) => { if (r.isConfirmed) { $wire.delete({{ $user->id }}) } })"
                     class="py-2 px-2 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-primary-300 text-primary-700 hover:bg-primary-200 focus:outline-hidden focus:bg-primary-200 disabled:opacity-50 disabled:pointer-events-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 lucide lucide-trash-icon lucide-trash">
-                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-                      <path d="M3 6h18" />
-                      <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 lucide lucide-ban-icon lucide-ban">
+                      <path d="M4.929 4.929 19.07 19.071" />
+                      <circle cx="12" cy="12" r="10" />
                     </svg></button>
                   @endrole
                 </td>

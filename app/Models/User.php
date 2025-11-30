@@ -60,6 +60,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(UserProfile::class);
     }
 
+    public function userBan(): HasMany
+    {
+        return $this->hasMany(UserBan::class);
+    }
+
     public function transaction(): HasMany
     {
         return $this->hasMany(Transaction::class);
