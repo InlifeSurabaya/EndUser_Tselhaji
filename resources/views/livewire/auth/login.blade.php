@@ -3,10 +3,8 @@
     {{-- Kolom Kiri - Branding --}}
     <div class="hidden lg:flex lg:w-1/2 flex-col justify-center items-center p-12 text-white bg-gradient-to-br from-primary-600 to-highlight-700">
         <div class="mb-6">
-            {{-- Logo MyTelkomsel --}}
-            <svg width="150" height="auto" viewBox="0 0 1024 341.33" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path d="M1024 170.67c0 94.26-76.41 170.66-170.67 170.66s-170.66-76.4-170.66-170.66S764.1 0 853.33 0 1024 76.41 1024 170.67zm-170.67 85.33c-47.13 0-85.34-38.21-85.34-85.33s38.21-85.34 85.34-85.34 85.33 38.21 85.33 85.34-38.2 85.33-85.33 85.33zM512 170.67c0 94.26-76.41 170.66-170.67 170.66s-170.66-76.4-170.66-170.66S252.1 0 341.33 0 512 76.41 512 170.67zm-170.67 85.33c-47.13 0-85.34-38.21-85.34-85.33s38.21-85.34 85.34-85.34 85.33 38.21 85.33 85.34-38.2 85.33-85.33 85.33zM170.67 341.33C76.41 341.33 0 264.92 0 170.67S76.41 0 170.67 0v341.33z" />
-            </svg>
+            {{-- Logo Telkomsel --}}
+            <img src="{{ asset('images/logo/logo-telkomsel-text-putih.png') }}" alt="Logo" class="h-20 w-auto">
         </div>
         <h1 class="text-3xl font-bold text-center mb-2">Selamat Datang Kembali</h1>
         <p class="text-lg text-center text-white/80">Akses semua layanan digital Telkomsel di satu tempat.</p>
