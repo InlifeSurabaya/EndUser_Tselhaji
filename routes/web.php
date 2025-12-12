@@ -19,6 +19,10 @@ use App\Livewire\User\UserProfile;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\ManajemenPesanan;
 
+use App\Livewire\RoamingAnalysis;
+
+Route::get('/roaming-analysis', RoamingAnalysis::class);
+
 
 // === AUTH ROUTE ===
 Route::get('/login', Login::class)->name('login');
