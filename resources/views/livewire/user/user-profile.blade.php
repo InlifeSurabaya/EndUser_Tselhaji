@@ -65,7 +65,7 @@
 
                 <div class="lg:col-span-2 p-6">
                     <form wire:submit.prevent="updateProfile" class="space-y-4">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1">
                             <div>
                                 <label for="fullname"
                                        class="block text-sm font-medium mb-1 text-[var(--color-neutral-700)]">Nama
@@ -76,7 +76,9 @@
                                 @error('fullname')
                                 <span class="text-sm text-[var(--color-error)]">{{ $message }}</span> @enderror
                             </div>
+                        </div>
 
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label for="gender"
                                        class="block text-sm font-medium mb-1 text-[var(--color-neutral-700)]">Jenis
@@ -91,9 +93,7 @@
                                 @error('gender')
                                 <span class="text-sm text-[var(--color-error)]">{{ $message }}</span> @enderror
                             </div>
-                        </div>
 
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label for="birth_date"
                                        class="block text-sm font-medium mb-1 text-[var(--color-neutral-700)]">Tanggal
@@ -103,27 +103,41 @@
                                 @error('birth_date')
                                 <span class="text-sm text-[var(--color-error)]">{{ $message }}</span> @enderror
                             </div>
+                        </div>
 
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label for="phone"
                                        class="block text-sm font-medium mb-1 text-[var(--color-neutral-700)]">Nomor
-                                    Telepon</label>
+                                    Telkomsel</label>
                                 <input id="phone" type="tel" wire:model.defer="phone"
                                        class="w-full py-2.5 px-3 border border-[var(--color-neutral-300)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary-500)]"
                                        placeholder="08123456789">
                                 @error('phone')
                                 <span class="text-sm text-[var(--color-error)]">{{ $message }}</span> @enderror
                             </div>
+                            
+                            <div>
+                                <label for="waphone"
+                                       class="block text-sm font-medium mb-1 text-[var(--color-neutral-700)]">Nomor
+                                    Whatsapp</label>
+                                <input id="waphone" type="tel" wire:model.defer="waphone"
+                                       class="w-full py-2.5 px-3 border border-[var(--color-neutral-300)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary-500)]"
+                                       placeholder="08123456789">
+                                @error('waphone')
+                                <span class="text-sm text-[var(--color-error)]">{{ $message }}</span> @enderror
+                            </div>
                         </div>
-
-                        <div>
+                        
+                        {{-- Input Alamat jika diperlukan --}}
+                        {{-- <div>
                             <label for="address" class="block text-sm font-medium mb-1 text-[var(--color-neutral-700)]">Alamat</label>
                             <textarea id="address" wire:model.defer="address" rows="3"
                                       class="w-full py-2.5 px-3 border border-[var(--color-neutral-300)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary-500)]"
                                       placeholder="Masukkan alamat lengkap Anda"></textarea>
                             @error('address')
                             <span class="text-sm text-[var(--color-error)]">{{ $message }}</span> @enderror
-                        </div>
+                        </div> --}}
 
                         <div class="flex justify-end pt-4">
                             <button type="submit"

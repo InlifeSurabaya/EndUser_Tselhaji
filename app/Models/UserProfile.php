@@ -12,7 +12,7 @@ class UserProfile extends Model
     /** @use HasFactory<\Database\Factories\UserProfileFactory> */
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['user_id', 'fullname', 'gender', 'birth_date', 'phone', 'address', 'avatar'];
+    protected $fillable = ['user_id', 'fullname', 'gender', 'birth_date', 'phone', 'waphone', 'address', 'avatar'];
 
     public function user(): BelongsTo
     {

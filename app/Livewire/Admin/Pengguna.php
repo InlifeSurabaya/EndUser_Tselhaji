@@ -3,7 +3,9 @@
 namespace App\Livewire\Admin;
 
 use App\Models\User;
+use App\Models\UserBan;
 use App\Models\UserProfile;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
@@ -29,6 +31,7 @@ class Pengguna extends Component
     public int $perPage = 10;
     public ?string $nameItem = null;
     public ?string $roleFilter = null;
+    public ?string $banFilter = null;
 
     // Properti data user
     public ?int $user_id = null;
@@ -37,10 +40,12 @@ class Pengguna extends Component
     public string $gender = '';
     public ?string $birth_date = null;
     public string $phone = '';
-    public string $phoneWa = '';
+    public string $waphone = '';
     public string $address = '';
     public ?string $role = null;
     public ?string $existingAvatar = null;
+    public string $is_ban = '';
+    public string $reason = '';
 
     public $avatar;
     public ?string $password = null;
@@ -51,7 +56,7 @@ class Pengguna extends Component
      */
     public function render()
     {
-        $query = User::with(['userProfile'])->latest();
+        $query = User::with(['userProfile', 'roles', 'ban'])->latest();
 
         // Filter pencarian berdasarkan nama
         if ($this->nameItem) {
@@ -64,9 +69,23 @@ class Pengguna extends Component
 
         // Filter berdasarkan role
         if ($this->roleFilter) {
-            $query->whereHas('roles', function($query) {
+            $query->whereHas('roles', function ($query) {
                 $query->where('name', $this->roleFilter);
             });
+        }
+
+        // Filter status ban
+        if ($this->banFilter === 'banned') {
+            $query->whereHas('ban', function ($q) {
+                $q->where('is_ban', 1);
+            });
+        }
+
+        if ($this->banFilter === 'active') {
+            $query->whereDoesntHave('ban')
+                ->orWhereHas('ban', function ($q) {
+                    $q->where('is_ban', 0);
+                });
         }
 
         $users = $query->paginate($this->perPage);
@@ -94,13 +113,11 @@ class Pengguna extends Component
     public function store(): void
     {
         $rules = [
-            'email' => 'required|email',
+            'email' => 'required|email|unique:users,email',
             'fullname' => 'required|string|max:255',
+            'password' => 'required|min:6|confirmed',
+            'role' => 'required|in:superadmin,user',
         ];
-
-        if ($this->password) {
-            $rules['password'] = 'required|min:6|confirmed';
-        }
 
         $messages = [
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
@@ -121,13 +138,12 @@ class Pengguna extends Component
                 'user_id' => $user->id,
                 'fullname' => $this->fullname,
                 'gender' => $this->gender,
-                'birth_date' => $this->birth_date,
                 'phone' => $this->phone,
                 'address' => $this->address,
             ]);
 
             LivewireAlert::title('Berhasil')
-                ->text('User berhasil ditambahkan.')
+                ->text('Pengguna berhasil ditambahkan.')
                 ->success()->toast()->position('top-end')->show();
 
             $this->clearForms();
@@ -144,12 +160,13 @@ class Pengguna extends Component
         }
     }
 
+
     /**
      * Buka halaman edit pengguna.
      */
     public function editPage(int $id): void
     {
-        $user = User::with('userProfile')->findOrFail($id);
+        $user = User::with('userProfile', 'roles')->findOrFail($id);
 
         $this->user_id = $user->id;
         $this->email = $user->email;
@@ -160,8 +177,10 @@ class Pengguna extends Component
         $this->gender = $profile->gender ?? '';
         $this->birth_date = $profile->birth_date ?? '';
         $this->phone = $profile->phone ?? '';
+        $this->waphone = $profile->waphone ?? '';
         $this->address = $profile->address ?? '';
         $this->existingAvatar = $profile->avatar ?? null;
+        $this->role = $user->roles->first()?->name;
 
         $this->view = 'edit';
     }
@@ -174,6 +193,8 @@ class Pengguna extends Component
         $rules = [
             'email' => 'required|email|unique:users,email,' . $this->user_id,
             'fullname' => 'required|string|max:255',
+            'birth_date' => 'nullable|date',
+            'role' => 'required|in:superadmin,user',
         ];
 
         if ($this->password) {
@@ -198,8 +219,9 @@ class Pengguna extends Component
             $user->userProfile->update([
                 'fullname' => $this->fullname,
                 'gender' => $this->gender,
-                'birth_date' => $this->birth_date,
+                'birth_date' => $this->birth_date ?: null,
                 'phone' => $this->phone,
+                'waphone' => $this->waphone,
                 'address' => $this->address,
             ]);
 
@@ -214,6 +236,8 @@ class Pengguna extends Component
                 $this->existingAvatar = $path;
                 $this->avatar = null;
             }
+
+            $user->syncRoles([$this->role]);
 
             LivewireAlert::title('Berhasil')
                 ->text('Data pengguna berhasil diperbarui.')
@@ -233,24 +257,48 @@ class Pengguna extends Component
         }
     }
 
+    public function confirmUpdate(string $password)
+    {
+        // Cek password admin yang sedang login
+        if (!Hash::check($password, auth()->user()->password)) {
+            LivewireAlert::title('Password Salah')
+                ->text('Password yang Anda masukkan tidak sesuai.')
+                ->error()
+                ->toast()
+                ->position('top-end')
+                ->show();
+
+            return;
+        }
+
+        // Jika password benar → lanjut update
+        $this->update();
+    }
+
+
     /**
      * Menampilkan detail pengguna.
      */
     public function showPage(int $id): void
     {
-        $user = User::with('userProfile')->findOrFail($id);
+        $user = User::with('userProfile', 'roles', 'ban')->findOrFail($id);
 
         $this->user_id = $user->id;
         $this->email = $user->email;
 
         $profile = $user->userProfile;
+        $ban = $user->ban;
 
         $this->fullname = $profile->fullname ?? '';
         $this->gender = $profile->gender ?? '';
         $this->birth_date = $profile->birth_date ?? '';
         $this->phone = $profile->phone ?? '';
+        $this->waphone = $profile->waphone ?? '';
         $this->address = $profile->address ?? '';
         $this->existingAvatar = $profile->avatar ?? null;
+        $this->role = $user->roles->first()?->name;
+        $this->is_ban = $ban->is_ban ?? '';
+        $this->reason = $ban->reason ?? '';
 
         $this->view = 'show';
     }
@@ -276,6 +324,69 @@ class Pengguna extends Component
     }
 
     /**
+     * Ban User.
+     */
+    public function banUser(int $userId, string $reason): void
+    {
+        try {
+            $user = User::findOrFail($userId);
+
+            UserBan::updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'is_ban' => '1',
+                    'reason' => $reason,
+                ]
+            );
+
+            LivewireAlert::title('User Dibanned')
+                ->text('User berhasil diblokir.')
+                ->success()
+                ->toast()
+                ->position('top-end')
+                ->show();
+        } catch (\Exception $e) {
+            LivewireAlert::title('Gagal Ban User')
+                ->text($e->getMessage())
+                ->error()
+                ->toast()
+                ->position('top-end')
+                ->show();
+        }
+    }
+
+    /**
+     * Unban User.
+     */
+    public function unbanUser(int $userId, string $reason): void
+    {
+        try {
+            $ban = UserBan::where('user_id', $userId)->first();
+
+            if ($ban) {
+                $ban->update([
+                    'is_ban' => 0,
+                    'reason' => $reason,
+                ]);
+            }
+
+            LivewireAlert::title('User Unbanned')
+                ->text('User berhasil diaktifkan kembali.')
+                ->success()
+                ->toast()
+                ->position('top-end')
+                ->show();
+        } catch (\Exception $e) {
+            LivewireAlert::title('Gagal Unban User')
+                ->text($e->getMessage())
+                ->error()
+                ->toast()
+                ->position('top-end')
+                ->show();
+        }
+    }
+
+    /**
      * Reset form dan error validasi.
      */
     public function clearForms(): void
@@ -288,6 +399,7 @@ class Pengguna extends Component
             'gender',
             'birth_date',
             'phone',
+            'waphone',
             'address',
             'avatar',
             'existingAvatar',

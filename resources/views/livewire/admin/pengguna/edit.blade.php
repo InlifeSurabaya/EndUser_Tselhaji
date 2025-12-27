@@ -1,4 +1,5 @@
-<div class="mb-10 bg-white border border-[var(--color-border)] rounded-2xl shadow-sm overflow-hidden" wire:loading.class="opacity-50 pointer-events-none">
+<div class="mb-10 bg-white border border-[var(--color-border)] rounded-2xl shadow-sm overflow-hidden"
+    wire:loading.class="opacity-50 pointer-events-none">
     @role(\App\Enum\RoleEnum::SUPER_ADMIN->value)
     <div class="grid grid-cols-1 lg:grid-cols-3">
 
@@ -13,13 +14,13 @@
                     <img class="h-42 w-42 rounded-full object-cover" src="{{ $avatar->temporaryUrl() }}"
                         alt="Preview Avatar">
                     @elseif ($existingAvatar)
-                    <img class="h-42 w-42 rounded-full object-cover"
-                        src="{{ Storage::url($existingAvatar) }}" alt="Avatar Pengguna">
+                    <img class="h-42 w-42 rounded-full object-cover" src="{{ Storage::url($existingAvatar) }}"
+                        alt="Avatar Pengguna">
                     @else
                     <div
                         class="h-42 w-42 rounded-full bg-[var(--color-neutral-200)] flex items-center justify-center text-[var(--color-neutral-600)]">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                            stroke-width="1.5" stroke="currentColor" class="w-16 h-16">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="w-16 h-16">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A1.75 1.75 0 0 1 18 22H6a1.75 1.75 0 0 1-1.499-1.882Z" />
                         </svg>
@@ -27,15 +28,18 @@
                     @endif
                     <div wire:loading wire:target="avatar"
                         class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center rounded-full">
-                        <div
-                            class="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--color-primary-600)]"></div>
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--color-primary-600)]">
+                        </div>
                     </div>
                 </div>
 
                 <label for="avatar-upload"
                     class="inline-flex items-center gap-x-1 cursor-pointer text-sm font-medium text-[var(--color-primary-600)] hover:text-[var(--color-primary-700)] disabled:opacity-50 disabled:pointer-events-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5 lucide lucide-image-up-icon lucide-image-up">
-                        <path d="M10.3 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10l-3.1-3.1a2 2 0 0 0-2.814.014L6 21" />
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="size-5 lucide lucide-image-up-icon lucide-image-up">
+                        <path
+                            d="M10.3 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10l-3.1-3.1a2 2 0 0 0-2.814.014L6 21" />
                         <path d="m14 19.5 3-3 3 3" />
                         <path d="M17 22v-5.5" />
                         <circle cx="9" cy="9" r="2" />
@@ -88,8 +92,7 @@
                     </div>
 
                     <div>
-                        <label for="gender"
-                            class="block text-sm font-medium mb-1 text-[var(--color-neutral-700)]">Jenis
+                        <label for="gender" class="block text-sm font-medium mb-1 text-[var(--color-neutral-700)]">Jenis
                             Kelamin</label>
                         <select id="gender" wire:model.defer="gender"
                             class="w-full py-2.5 px-3 border border-[var(--color-neutral-300)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary-500)] focus:border-[var(--color-primary-500)]">
@@ -103,8 +106,8 @@
                     </div>
 
                     <div>
-                        <label for="phone"
-                            class="block text-sm font-medium mb-1 text-[var(--color-neutral-700)]">Nomor Telkomsel</label>
+                        <label for="phone" class="block text-sm font-medium mb-1 text-[var(--color-neutral-700)]">Nomor
+                            Telkomsel</label>
                         <input id="phone" type="tel" wire:model.defer="phone"
                             class="w-full py-2.5 px-3 border border-[var(--color-neutral-300)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary-500)]"
                             placeholder="081xxx...">
@@ -113,12 +116,13 @@
                     </div>
 
                     <div>
-                        <label for="phoneWa"
-                            class="block text-sm font-medium mb-1 text-[var(--color-neutral-700)]">Nomor Whatsapp</label>
-                        <input id="phoneWa" type="tel" wire:model.defer="phoneWa"
+                        <label for="waphone"
+                            class="block text-sm font-medium mb-1 text-[var(--color-neutral-700)]">Nomor
+                            Whatsapp</label>
+                        <input id="waphone" type="tel" wire:model.defer="waphone"
                             class="w-full py-2.5 px-3 border border-[var(--color-neutral-300)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary-500)]"
                             placeholder="081xxx...">
-                        @error('phoneWa')
+                        @error('waphone')
                         <span class="text-sm text-[var(--color-error)]">{{ $message }}</span> @enderror
                     </div>
 
@@ -141,7 +145,8 @@
 
                     <div>
                         <label for="password_confirmation"
-                            class="block text-sm font-medium mb-1 text-[var(--color-neutral-700)]">Konfirmasi Password</label>
+                            class="block text-sm font-medium mb-1 text-[var(--color-neutral-700)]">Konfirmasi
+                            Password</label>
                         <input id="password_confirmation" type="password" wire:model.defer="password_confirmation"
                             class="w-full py-2.5 px-3 border border-[var(--color-neutral-300)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary-500)] focus:border-[var(--color-primary-500)]"
                             placeholder="Konfirmasi Password">
@@ -155,8 +160,8 @@
                         <select id="role" wire:model.defer="role"
                             class="w-full py-2.5 px-3 border border-[var(--color-neutral-300)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary-500)] focus:border-[var(--color-primary-500)]">
                             <option value="">Pilih...</option>
-                            <option value="admin">Admin</option>
-                            <option value="user">User</option>
+                            <option value="{{ \App\Enum\RoleEnum::SUPER_ADMIN->value }}">Super Admin</option>
+                            <option value="{{ \App\Enum\RoleEnum::USER->value }}">User</option>
                         </select>
                         @error('role')
                         <span class="text-sm text-[var(--color-error)]">{{ $message }}</span> @enderror
@@ -165,16 +170,30 @@
 
 
                 <div class="flex justify-end pt-4">
-                    <button type="button" wire:click="$set('view','index')" class="px-4 py-2 bg-neutral-300 hover:bg-neutral-200 rounded mr-2">Kembali</button>
-                    <button type="submit"
-                        class="bg-[var(--color-primary-600)] hover:bg-[var(--color-primary-700)] text-white font-semibold py-2.5 px-5 rounded-lg transition-all duration-200 flex items-center gap-2"
-                        wire:loading.attr="disabled">
-                        <span wire:loading.remove wire:target="updateProfile">Simpan Perubahan</span>
-                        <span wire:loading wire:target="updateProfile">
-                            <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                            Menyimpan...
-                        </span>
+                    <button type="button" wire:click="$set('view','index')"
+                        class="px-4 py-2 bg-neutral-300 hover:bg-neutral-200 rounded mr-2">Kembali</button>
+                    <button type="button" @click="Swal.fire({
+                            title: 'Konfirmasi Password',
+                            text: 'Masukkan password Anda untuk menyimpan perubahan',
+                            input: 'password',
+                            inputPlaceholder: 'Password Anda',
+                            showCancelButton: true,
+                            confirmButtonText: 'Konfirmasi',
+                            cancelButtonText: 'Batal',
+                            preConfirm: (password) => {
+                                if (!password) {
+                                    Swal.showValidationMessage('Password wajib diisi');
+                                }
+                                return password;
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $wire.confirmUpdate(result.value)
+                            }
+                        })" class="bg-[var(--color-primary-600)] hover:bg-[var(--color-primary-700)] text-white font-semibold py-2.5 px-5 rounded-lg">
+                        Simpan Perubahan
                     </button>
+
                 </div>
             </form>
         </div>

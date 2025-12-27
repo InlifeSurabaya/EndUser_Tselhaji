@@ -24,6 +24,8 @@ class UserProfile extends Component
 
     public ?string $phone = '';
 
+    public ?string $waphone = '';
+
     public ?string $address = '';
 
     public $avatar; // Untuk unggahan baru
@@ -44,6 +46,7 @@ class UserProfile extends Component
             'gender' => ['nullable'],
             'birth_date' => ['nullable', 'date'],
             'phone' => ['nullable', 'string', 'max:20'],
+            'waphone' => ['nullable', 'string', 'max:20'],
             'address' => ['nullable', 'string', 'max:1000'],
             'avatar' => ['nullable', 'image', 'max:2048'], // Maks 2MB
         ];
@@ -68,6 +71,7 @@ class UserProfile extends Component
             $this->gender = $user->userProfile->gender;
             $this->birth_date = $user->userProfile->birth_date;
             $this->phone = $user->userProfile->phone;
+            $this->waphone = $user->userProfile->waphone;
             $this->address = $user->userProfile->address;
             $this->existingAvatar = $user->userProfile->avatar;
         }
@@ -94,6 +98,7 @@ class UserProfile extends Component
             'gender' => $this->gender,
             'birth_date' => $this->birth_date,
             'phone' => $this->phone,
+            'waphone' => $this->waphone,
             'address' => $this->address,
         ];
 

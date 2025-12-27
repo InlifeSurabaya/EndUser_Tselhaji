@@ -33,7 +33,7 @@
                     <div>
                         <label for="email"
                             class="block text-sm font-medium mb-1 text-[var(--color-neutral-700)]">Email</label>
-                        <input id="email" type="text" wire:model="email"
+                        <input id="email" type="text" wire:model.defer="email"
                             class="w-full py-2.5 px-3 border border-[var(--color-neutral-300)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary-500)] focus:border-[var(--color-primary-500)]"
                             placeholder="Email">
                         @error('email')
@@ -44,7 +44,7 @@
                         <label for="fullname"
                             class="block text-sm font-medium mb-1 text-[var(--color-neutral-700)]">Nama
                             Lengkap</label>
-                        <input id="fullname" type="text" wire:model="fullname"
+                        <input id="fullname" type="text" wire:model.defer="fullname"
                             class="w-full py-2.5 px-3 border border-[var(--color-neutral-300)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary-500)] focus:border-[var(--color-primary-500)]"
                             placeholder="Nama lengkap Anda">
                         @error('fullname')
@@ -54,7 +54,7 @@
                     <div>
                         <label for="password"
                             class="block text-sm font-medium mb-1 text-[var(--color-neutral-700)]">Password</label>
-                        <input id="password" type="password" wire:model="password"
+                        <input id="password" type="password" wire:model.defer="password"
                             class="w-full py-2.5 px-3 border border-[var(--color-neutral-300)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary-500)] focus:border-[var(--color-primary-500)]"
                             placeholder="Password">
                         @error('password')
@@ -64,7 +64,7 @@
                     <div>
                         <label for="password_confirmation"
                             class="block text-sm font-medium mb-1 text-[var(--color-neutral-700)]">Konfirmasi Password</label>
-                        <input id="password_confirmation" type="password" wire:model="password_confirmation"
+                        <input id="password_confirmation" type="password" wire:model.defer="password_confirmation"
                             class="w-full py-2.5 px-3 border border-[var(--color-neutral-300)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary-500)] focus:border-[var(--color-primary-500)]"
                             placeholder="Konfirmasi Password">
                         @error('password_confirmation')
@@ -75,7 +75,7 @@
                         <label for="gender"
                             class="block text-sm font-medium mb-1 text-[var(--color-neutral-700)]">Jenis
                             Kelamin</label>
-                        <select id="gender" wire:model="gender"
+                        <select id="gender" wire:model.defer="gender"
                             class="w-full py-2.5 px-3 border border-[var(--color-neutral-300)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary-500)] focus:border-[var(--color-primary-500)]">
                             <option value="">Pilih...</option>
                             <option value="male">Laki-laki</option>
@@ -89,7 +89,7 @@
                     <div>
                         <label for="phone"
                             class="block text-sm font-medium mb-1 text-[var(--color-neutral-700)]">Nomor Telkomsel</label>
-                        <input id="phone" type="tel" wire:model="phone"
+                        <input id="phone" type="tel" wire:model.defer="phone"
                             class="w-full py-2.5 px-3 border border-[var(--color-neutral-300)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary-500)]"
                             placeholder="081xxx...">
                         @error('phone')
@@ -99,8 +99,9 @@
                     <div>
                         <label for="role"
                             class="block text-sm font-medium mb-1 text-[var(--color-neutral-700)]">Role</label>
-                        <select id="role" wire:model="role"
+                        <select id="role" wire:model.defer="role"
                             class="w-full py-2.5 px-3 border border-[var(--color-neutral-300)] rounded-lg focus:ring-2 focus:ring-[var(--color-primary-500)] focus:border-[var(--color-primary-500)]">
+                            <option value="">Pilih Role...</option>
                             <option value="{{ \App\Enum\RoleEnum::USER->value }}">User</option>
                             <option value="{{ \App\Enum\RoleEnum::SUPER_ADMIN->value }}">Admin</option>
                         </select>

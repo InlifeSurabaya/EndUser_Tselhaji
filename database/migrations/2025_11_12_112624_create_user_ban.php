@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_ban', function(Blueprint $table) {
+        Schema::create('user_bans', function(Blueprint $table) {
             $table->id()->index();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->tinyInteger('is_ban')->default(0);
