@@ -1,4 +1,6 @@
-<div class="max-w-7xl mx-auto my-7 px-4 sm:px-6 lg:px-8">
+<div x-data="{ openDetailModal: false }"
+     @keydown.escape.window="openDetailModal = false"
+     class="max-w-7xl mx-auto my-7 px-4 sm:px-6 lg:px-8">
 
     <!-- Header Halaman -->
     <header class="mb-6">
@@ -111,10 +113,16 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <a href="#" class="text-accent-600 hover:text-accent-800">
+                                    <button
+                                        wire:click="showTransactionDetail({{ $transaction->id }})"
+                                        @click="openDetailModal = true"
+                                        class="text-accent-600 hover:text-accent-800"
+                                    >
                                         Detail
-                                    </a>
+                                    </button>
+
                                 </td>
+
                             </tr>
                         @empty
                             <!-- Tampilan Jika Data Kosong (Empty State) -->
@@ -150,5 +158,6 @@
             </div>
         @endif
     </div>
-
+    @include('livewire.transaction.partials.modal-detail-transaction')
 </div>
+
