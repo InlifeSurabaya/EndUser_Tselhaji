@@ -7,12 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class UserProfile extends Model
+class UserBan extends Model
 {
     /** @use HasFactory<\Database\Factories\UserProfileFactory> */
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['user_id', 'fullname', 'gender', 'birth_date', 'phone', 'waphone', 'address', 'avatar'];
+    protected $fillable = ['user_id', 'is_ban', 'reason'];
 
     public function user(): BelongsTo
     {
