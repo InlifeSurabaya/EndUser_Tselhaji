@@ -85,10 +85,10 @@
         </a>
 
         {{-- Pengguna --}}
-        <a href=""
+        <a href="{{ Route('admin.pengguna') }}"
            wire:navigate
            class="flex items-center gap-x-3.5 py-2 px-2.5 rounded-lg transition
-                {{ Route::is('pengguna') ? 'bg-[var(--color-primary-600)] text-white' : 'hover:bg-neutral-800 hover:text-white' }}">
+                {{ Route::is('admin.pengguna') ? 'bg-[var(--color-primary-600)] text-white' : 'hover:bg-neutral-800 hover:text-white' }}">
             <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>

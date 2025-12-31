@@ -12,6 +12,17 @@ use Livewire\WithPagination;
 class HistoryTransaction extends Component
 {
     use WithPagination;
+    public ?Transaction $selectedTransaction = null;
+
+    protected $listeners = ['showTransactionDetail'];
+
+    public function showTransactionDetail(int $id)
+    {
+        $this->selectedTransaction = Transaction::with('order')
+            ->where('user_id', auth()->id())
+            ->findOrFail($id);
+    }
+
 
     public function render()
     {

@@ -68,7 +68,7 @@ class Detail extends Component
             $this->order->settlement_time = Carbon::now();
             $this->order->save();
 
-            LivewireAlert::title('Sucess')
+            LivewireAlert::title('Success')
                 ->text('Bukti pembayaran telah dikirim!, tunggu konfirmasi selanjutnya.')
                 ->success()
                 ->timer(60000)
