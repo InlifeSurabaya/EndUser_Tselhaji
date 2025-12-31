@@ -1,0 +1,13 @@
+{
+  "event": "payment.settlement",
+  "transaction": {
+    "transaction_number": "WEBHOOK-TEST-001",
+    "order_id": 999,
+    "status": "success",
+    "gross_amount": 750000,
+    "payment_type": "qris"
+  },
+  "custom_fields": {
+    "id_transaksi": "INV-WEBHOOK-TEST-001"
+  }
+}

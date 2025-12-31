@@ -7,11 +7,13 @@ use App\Enum\OrderStatusEnum;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Voucher;
+use App\Models\Transaction;
 use App\Traits\LogsDeveloper;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
 use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
@@ -44,6 +46,9 @@ class Create extends Component
     public $guestEmail;
 
     public $phoneNumber;
+
+    // Tambahkan property untuk payment
+    public $paymentType = 'transfer'; // transfer, qris, cash, etc
 
     public function mount(): void
     {
@@ -235,77 +240,436 @@ class Create extends Component
     }
 
     /**
-     * Membuat order baru
+     * Generate unique transaction number
      */
-    public function createOrder()
+    private function generateTransactionNumber()
     {
-        // Pastikan harga sudah ter-update (untuk jaga-jaga)
-        $this->calculatePrices();
-        DB::beginTransaction();
-        $user = Auth::user();
+        return 'TRX-' . time() . '-' . strtoupper(substr(uniqid(), -8));
+    }
 
+    /**
+     * Create transaction di Laravel B
+     */
+    /**
+ * Create transaction di Laravel B
+ */
+private function createTransactionInLaravelB($transactionNumber, $grossAmount, $orderId = 0)
+{
+    try {
+        $laravelBUrl = env('LARAVEL_B_URL', 'http://localhost:8000');
+
+        Log::info('Creating transaction via UAS API', [
+            'url' => $laravelBUrl . '/api/transaksi/uas-guaranteed',
+            'transaction_number' => $transactionNumber,
+            'amount' => $grossAmount
+        ]);
+
+        // Gunakan endpoint UAS yang sudah terbukti berhasil
+        $response = Http::timeout(30)
+            ->post("{$laravelBUrl}/api/transaksi/uas-guaranteed", [
+                'transaction_number' => $transactionNumber,
+                'gross_amount' => $grossAmount,
+                'payment_type' => $this->paymentType,
+                'status' => 'pending',
+                'customer_phone' => $this->phoneNumber,
+                'customer_email' => $this->guestEmail ?? (Auth::check() ? Auth::user()->email : null),
+                'order_id' => $orderId,
+                'notes' => 'Order dari Laravel A Livewire',
+                'product_name' => $this->product->name ?? 'Produk Digital'
+            ]);
+
+        if ($response->successful()) {
+            $responseData = $response->json();
+            Log::info('Transaction created via UAS API', [
+                'transaction_number' => $transactionNumber,
+                'response' => $responseData
+            ]);
+
+            return [
+                'success' => true,
+                'data' => $responseData
+            ];
+        } else {
+            Log::warning('UAS API responded with non-success', [
+                'transaction_number' => $transactionNumber,
+                'status' => $response->status(),
+                'response' => $response->body()
+            ]);
+
+            // Fallback ke simulation endpoint
+            return $this->createTransactionFallback($transactionNumber, $grossAmount);
+        }
+    } catch (\Exception $e) {
+        Log::error('Exception creating transaction via UAS API', [
+            'transaction_number' => $transactionNumber,
+            'error' => $e->getMessage()
+        ]);
+
+        // Coba fallback
+        return $this->createTransactionFallback($transactionNumber, $grossAmount);
+    }
+}
+
+/**
+ * Fallback menggunakan simulation endpoint
+ */
+private function createTransactionFallback($transactionNumber, $grossAmount)
+{
+    try {
+        $laravelBUrl = env('LARAVEL_B_URL', 'http://localhost:8000');
+
+        Log::info('Trying fallback to simulation endpoint');
+
+        $response = Http::timeout(30)
+            ->post("{$laravelBUrl}/api/transaksi/uas-simulation", [
+                'transaction_number' => $transactionNumber,
+                'gross_amount' => $grossAmount,
+                'payment_type' => $this->paymentType,
+                'customer_phone' => $this->phoneNumber
+            ]);
+
+        if ($response->successful()) {
+            $responseData = $response->json();
+            Log::info('Transaction created via simulation endpoint', [
+                'transaction_number' => $transactionNumber,
+                'response' => $responseData
+            ]);
+
+            return [
+                'success' => true,
+                'data' => $responseData,
+                'note' => 'Created via simulation (fallback)'
+            ];
+        } else {
+            Log::error('Fallback also failed', [
+                'transaction_number' => $transactionNumber,
+                'status' => $response->status()
+            ]);
+
+            return [
+                'success' => false,
+                'error' => 'All endpoints failed'
+            ];
+        }
+    } catch (\Exception $e) {
+        Log::error('Fallback creation failed', [
+            'transaction_number' => $transactionNumber,
+            'error' => $e->getMessage()
+        ]);
+
+        return [
+            'success' => false,
+            'error' => 'Fallback failed: ' . $e->getMessage()
+        ];
+    }
+}
+
+    /**
+     * Create transaction di database lokal (Laravel A)
+     */
+    private function createLocalTransaction($orderId, $transactionNumber)
+    {
         try {
-            if (!$user) {
-                $this->validate([
-                    'guestEmail' => 'email|required',
-                    'phoneNumber' => 'numeric|required',
+            // Buat transaction di Laravel A
+            $transaction = Transaction::create([
+                'transaction_number' => $transactionNumber,
+                'order_id' => $orderId,
+                'user_id' => Auth::id() ?? 1,
+                'gross_amount' => $this->finalPrice,
+                'net_amount' => $this->finalPrice,
+                'payment_type' => $this->paymentType,
+                'status' => 'pending',
+                'transaction_time' => now(),
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+
+            Log::info('Local transaction created', [
+                'transaction_id' => $transaction->id,
+                'transaction_number' => $transactionNumber,
+                'order_id' => $orderId
+            ]);
+
+            return $transaction;
+        } catch (\Exception $e) {
+            Log::error('Failed to create local transaction', [
+                'order_id' => $orderId,
+                'error' => $e->getMessage()
+            ]);
+            throw $e;
+        }
+    }
+
+    /**
+     * Sync order ke Laravel B (optional)
+     */
+    private function syncOrderToLaravelB($order)
+    {
+        try {
+            $laravelBUrl = env('LARAVEL_B_URL', 'http://localhost:8000');
+
+            $orderData = [
+                'order_number' => $order->order_number,
+                'customer_name' => $order->customer_name ?? 'Customer',
+                'customer_email' => $order->customer_email,
+                'customer_phone' => $order->customer_phone,
+                'product_name' => $this->product->name,
+                'product_price' => $this->finalPrice,
+                'final_price' => $this->finalPrice,
+                'status' => 'pending',
+                'created_at' => $order->created_at->toDateTimeString(),
+                'notes' => $order->notes ?? 'Order from Laravel A',
+                'sync_id' => 'sync-' . uniqid()
+            ];
+
+            $response = Http::timeout(30)
+                ->post("{$laravelBUrl}/api/orders/sync", $orderData);
+
+            if ($response->successful()) {
+                Log::info('Order synced to Laravel B', [
+                    'order_number' => $order->order_number,
+                    'response' => $response->json()
                 ]);
             } else {
-                $this->validate([
-                    'phoneNumber' => 'numeric|required',
+                Log::warning('Failed to sync order to Laravel B', [
+                    'order_number' => $order->order_number,
+                    'status' => $response->status()
                 ]);
             }
-
-            // Create new order
-            $newOrder = Order::create([
-                'user_id' => $user->id ?? null,
-                'product_id' => $this->product->id,
-                'voucher_id' => $this->voucherModel?->id,
-                'category_country_product_id' => $this->product->country->id,
-                'original_price' => $this->product->price,
-                'discount_amount' => $this->productDiscount + $this->voucherDiscount, // Total diskon
-                'final_price' => $this->finalPrice,
-                'status' => OrderStatusEnum::PENDING->value,
-                'customer_name' => $user?->userProfile()?->fullname ?? null,
-                'customer_email' => $user?->email ?? $this->guestEmail,
-                'customer_phone' => $this->phoneNumber,
-                'notes' => $this->notes ?? null,
-                'expired_at' => Carbon::now()->copy()->addHours(24),
+        } catch (\Exception $e) {
+            Log::error('Exception syncing order to Laravel B', [
+                'order_number' => $order->order_number ?? 'unknown',
+                'error' => $e->getMessage()
             ]);
-
-            // Check apakah user memasukan voucher
-            if ($this->voucherModel) {
-                // Update used count
-                $this->voucherModel->used_count = $this->voucherModel?->used_count + 1;
-                $this->voucherModel?->save();
-            }
-
-            DB::commit();
-
-            return $this->redirect(route('order.detail', ['uuidOrder' => $newOrder->uuid]), navigate: true);
-
-        } catch (ValidationException $e) {
-            LivewireAlert::title('Terjadi Kesalahan')
-                ->text($e->getMessage())
-                ->error()
-                ->show();
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            $this->logErrorForDeveloper($e, [
-                'context' => 'Gagal saat membuat order',
-                'product_id' => $this->productId ?? 'Not Set',
-                'voucher_input' => $this->voucher ?? 'Not Set',
-            ]);
-
-            LivewireAlert::title('Terjadi Kesalahan')
-                ->text('Oops something went wrong.')
-                ->error()
-                ->show();
         }
+    }
+
+    /**
+     * Membuat order baru dengan transaction - SIMPLE VERSION
+     */
+ /**
+ * Membuat order baru - Sederhana dan mengikuti alur curl
+ */
+public function createOrder()
+{
+    // Validasi
+    $user = Auth::user();
+    if (!$user) {
+        $this->validate([
+            'guestEmail' => 'email|required',
+            'phoneNumber' => 'numeric|required|min:10',
+        ]);
+    } else {
+        $this->validate([
+            'phoneNumber' => 'numeric|required|min:10',
+        ]);
+    }
+
+    DB::beginTransaction();
+    try {
+        // Pastikan harga sudah ter-update
+        $this->calculatePrices();
+
+        Log::info('=== CREATE ORDER PROCESS STARTED ===');
+        Log::info('Product: ' . ($this->product->name ?? 'N/A'));
+        Log::info('Final Price: ' . $this->finalPrice);
+        Log::info('Phone: ' . $this->phoneNumber);
+        Log::info('Payment Type: ' . $this->paymentType);
+
+        // 1. Generate transaction number
+        $transactionNumber = 'TRX-' . time() . '-' . rand(100, 999);
+        Log::info('Generated transaction number: ' . $transactionNumber);
+
+        // 2. Create transaction via UAS API (Laravel B)
+        Log::info('Calling UAS API...');
+        $apiResponse = $this->createTransactionInLaravelB(
+            $transactionNumber,
+            $this->finalPrice,
+            0
+        );
+
+        if (!$apiResponse['success']) {
+            Log::error('API call failed, creating order locally only');
+
+            // Still create order locally but mark as warning
+            $newOrder = $this->createLocalOrderOnly($transactionNumber);
+
+            LivewireAlert::title('Order Dibuat dengan Catatan')
+                ->html('Order berhasil dibuat di sistem kami.<br>Sistem pembayaran eksternal sedang maintenance.')
+                ->warning()
+                ->timer(5000)
+                ->show();
+
+            return $this->redirectToOrderDetail($newOrder);
+        }
+
+        Log::info('API call successful, proceeding with order creation');
+
+        // 3. Create new order di Laravel A
+        $newOrder = Order::create([
+            'user_id' => $user->id ?? null,
+            'product_id' => $this->product->id,
+            'voucher_id' => $this->voucherModel?->id,
+            'category_country_product_id' => $this->product->country->id,
+            'original_price' => $this->product->price,
+            'discount_amount' => $this->productDiscount + $this->voucherDiscount,
+            'final_price' => $this->finalPrice,
+            'status' => OrderStatusEnum::PENDING->value,
+            'customer_name' => $user?->userProfile()?->fullname ?? 'Customer',
+            'customer_email' => $user?->email ?? $this->guestEmail,
+            'customer_phone' => $this->phoneNumber,
+            'notes' => $this->notes ?? 'Created via UAS API integration',
+            'expired_at' => Carbon::now()->copy()->addHours(24),
+            'order_number' => $transactionNumber,
+            'payment_reference' => $apiResponse['data']['transaction'] ?? $transactionNumber,
+        ]);
+
+        Log::info('Order created in database', ['order_id' => $newOrder->id]);
+
+        // 4. Update voucher jika digunakan
+        if ($this->voucherModel) {
+            $this->voucherModel->increment('used_count');
+            Log::info('Voucher updated', ['voucher_id' => $this->voucherModel->id]);
+        }
+
+        // 5. Create local transaction record
+        $this->createLocalTransaction($newOrder->id, $transactionNumber);
+        Log::info('Local transaction record created');
+
+        DB::commit();
+        Log::info('=== CREATE ORDER PROCESS COMPLETED ===');
+
+        // Simpan data ke session
+        Session::put('last_transaction_number', $transactionNumber);
+        Session::put('last_order_id', $newOrder->id);
+
+        LivewireAlert::title('✅ Order Berhasil Dibuat!')
+            ->text('Silakan lanjutkan ke halaman detail untuk informasi pembayaran.')
+            ->success()
+            ->timer(4000)
+            ->show();
+
+        return $this->redirectToOrderDetail($newOrder);
+
+    } catch (ValidationException $e) {
+        DB::rollBack();
+        Log::error('Validation error', ['errors' => $e->errors()]);
+
+        LivewireAlert::title('Validasi Gagal')
+            ->text(implode(', ', array_flatten($e->errors())))
+            ->error()
+            ->show();
+
+    } catch (\Throwable $e) {
+        DB::rollBack();
+        Log::error('Create order failed', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+
+        LivewireAlert::title('Terjadi Kesalahan')
+            ->text('Silakan coba lagi atau hubungi admin: ' . $e->getMessage())
+            ->error()
+            ->show();
+    }
+}
+
+/**
+ * Create local order only (without API call)
+ */
+private function createLocalOrderOnly($transactionNumber)
+{
+    $user = Auth::user();
+
+    return Order::create([
+        'user_id' => $user->id ?? null,
+        'product_id' => $this->product->id,
+        'voucher_id' => $this->voucherModel?->id,
+        'category_country_product_id' => $this->product->country->id,
+        'original_price' => $this->product->price,
+        'discount_amount' => $this->productDiscount + $this->voucherDiscount,
+        'final_price' => $this->finalPrice,
+        'status' => OrderStatusEnum::PENDING->value,
+        'customer_name' => $user?->userProfile()?->fullname ?? 'Customer',
+        'customer_email' => $user?->email ?? $this->guestEmail,
+        'customer_phone' => $this->phoneNumber,
+        'notes' => ($this->notes ?? '') . ' [API-UNAVAILABLE]',
+        'expired_at' => Carbon::now()->copy()->addHours(24),
+        'order_number' => $transactionNumber,
+        'payment_reference' => $transactionNumber,
+    ]);
+}
+
+/**
+ * Redirect to order detail
+ */
+private function redirectToOrderDetail($order)
+{
+    return $this->redirect(route('order.detail', ['uuidOrder' => $order->uuid]), navigate: true);
+}
+    /**
+     * Update payment type
+     */
+    public function updatedPaymentType($value)
+    {
+        $this->paymentType = $value;
+        Log::info('Payment type updated to: ' . $value);
     }
 
     public function render()
     {
-        return view('livewire.order.create');
+        return view('livewire.order.create', [
+            'paymentTypes' => [
+                'transfer' => 'Transfer Bank',
+                'qris' => 'QRIS',
+                'cash' => 'Cash',
+                'virtual_account' => 'Virtual Account',
+                'ewallet' => 'E-Wallet',
+            ]
+        ]);
     }
+    /**
+ * Test UAS API directly
+ */
+public function testUasApi()
+{
+    try {
+        $this->calculatePrices();
+        $transactionNumber = 'TEST-' . time();
+
+        Log::info('Testing UAS API directly...');
+
+        $response = Http::post('http://localhost:8000/api/transaksi/uas-guaranteed', [
+            'transaction_number' => $transactionNumber,
+            'gross_amount' => $this->finalPrice,
+            'payment_type' => 'qris',
+            'customer_phone' => '08123456789',
+            'product_name' => 'Test Product'
+        ]);
+
+        if ($response->successful()) {
+            $data = $response->json();
+            LivewireAlert::title('✅ API Test Successful')
+                ->text('Response: ' . ($data['message'] ?? 'Success'))
+                ->success()
+                ->timer(4000)
+                ->show();
+
+            Log::info('API Test Success', $data);
+        } else {
+            LivewireAlert::title('❌ API Test Failed')
+                ->text('Status: ' . $response->status())
+                ->error()
+                ->timer(4000)
+                ->show();
+        }
+
+    } catch (\Exception $e) {
+        LivewireAlert::title('⚠️ API Test Error')
+            ->text('Error: ' . $e->getMessage())
+            ->warning()
+            ->timer(4000)
+            ->show();
+    }
+}
 }

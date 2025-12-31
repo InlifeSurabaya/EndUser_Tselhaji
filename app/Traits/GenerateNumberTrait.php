@@ -39,7 +39,7 @@ trait GenerateNumberTrait
             $randomPart = Str::upper(Str::random($length));
 
             // Gabungkan menjadi nomor baru
-            $newNumber = "{$prefix}/{$datePart}/{$randomPart}";
+            $newNumber = "{$prefix}-{$datePart}-{$randomPart}";
 
             // Cek apakah nomor ini sudah ada di database
             $exists = self::where($field, $newNumber)->exists();

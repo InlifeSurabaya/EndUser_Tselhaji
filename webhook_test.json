@@ -1,0 +1,12 @@
+{
+  "event": "payment.settlement",
+  "transaction": {
+    "transaction_number": "TEST-001",
+    "status": "success",
+    "gross_amount": 100000,
+    "payment_type": "qris"
+  },
+  "custom_fields": {
+    "id_transaksi": "TEST-INV-001"
+  }
+}
