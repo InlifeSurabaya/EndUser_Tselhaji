@@ -36,6 +36,7 @@ class Register extends Component
             $user = User::create([
                 'email' => $validatedData['email'],
                 'password' => Hash::make($validatedData['password']),
+                'is_new' => 1,
             ]);
 
             $user->assignRole(RoleEnum::USER->value);

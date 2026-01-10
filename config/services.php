@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'api' => [
+        'url_ai' => env('url_api_ai')
+    ]
+
 ];

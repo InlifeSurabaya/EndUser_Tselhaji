@@ -44,10 +44,14 @@ class Create extends Component
     public $guestEmail;
 
     public $phoneNumber;
+    public $discountSegmentUser = 0; // Persentase (misal: 10)
+    public $segmentDiscountAmount = 0; // Nominal (misal: 5000)
+
 
     public function mount(): void
     {
         $this->productId = Session::get('selected_product_id');
+        $this->discountSegmentUser = Session::get('selected_discount');
 
         Log::info('create ' . $this->productId);
         if (empty($this->productId)) {
@@ -119,30 +123,35 @@ class Create extends Component
             Log::info('Hitung diskon product end ' . $this->productDiscount);
         }
 
-        // Harga setelah diskon produk
-        $priceAfterProductDiscount = $originalPrice - $this->productDiscount;
-        Log::info('Harga after product discount: ' . $priceAfterProductDiscount);
+        // Harga berjalan setelah diskon produk
+        $runningPrice = $originalPrice - $this->productDiscount;
 
-        // 2. Hitung Diskon Voucher (jika ada voucher valid)
-        if ($this->voucherModel) {
-            Log::info('Hitung voucher product');
-            if ($this->voucherModel->discount_type === DiscountTypeEnum::PERCENTEAGE->value) {
-                Log::info('Hitung voucher product percent');
-                $this->voucherDiscount = $priceAfterProductDiscount * ($this->voucherModel->discount_value / 100);
-                Log::info('Hitung voucher product percent end ' . $this->voucherDiscount);
-            } elseif ($this->voucherModel->discount_type === DiscountTypeEnum::FIXED->value) {
-                Log::info('Hitung voucher product fixed');
-                $this->voucherDiscount = $this->voucherModel->discount_value;
-                Log::info('Hitung voucher product fixed end ' . $this->voucherDiscount);
-            }
-            $this->voucherDiscount = min($this->voucherDiscount, $priceAfterProductDiscount);
-            Log::info('Hitung voucher product end kondisi ' . $this->voucherDiscount);
-            Log::info('Harga voucher product end kondisi price after product ' . $priceAfterProductDiscount);
+        if ($this->discountSegmentUser > 0) {
+            $this->segmentDiscountAmount = $runningPrice * ($this->discountSegmentUser / 100);
 
+            // Kurangi harga berjalan
+            $runningPrice = $runningPrice - $this->segmentDiscountAmount;
         }
 
-        $this->finalPrice = $priceAfterProductDiscount - $this->voucherDiscount;
-        Log::info('Final price: ' . $this->finalPrice);
+        if ($this->voucherModel) {
+            $calculatedVoucherDiscount = 0;
+
+            if ($this->voucherModel->discount_type === DiscountTypeEnum::PERCENTEAGE->value) {
+                // Voucher persen dihitung dari harga terakhir ($runningPrice)
+                $calculatedVoucherDiscount = $runningPrice * ($this->voucherModel->discount_value / 100);
+            } elseif ($this->voucherModel->discount_type === DiscountTypeEnum::FIXED->value) {
+                $calculatedVoucherDiscount = $this->voucherModel->discount_value;
+            }
+
+            // Pastikan diskon voucher tidak melebihi sisa harga yang harus dibayar
+            $this->voucherDiscount = min($calculatedVoucherDiscount, $runningPrice);
+
+            // Kurangi harga berjalan
+            $runningPrice = $runningPrice - $this->voucherDiscount;
+        }
+
+        // Set Final Price (Pastikan tidak minus)
+        $this->finalPrice = max(0, $runningPrice);
     }
 
     /**

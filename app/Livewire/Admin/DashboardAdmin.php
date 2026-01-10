@@ -24,14 +24,14 @@ class DashboardAdmin extends Component
     public $totalProducts, $activeProducts;
     public $totalOrders, $ordersThisMonth;
     public $totalRevenue, $transactionsCount;
-    
+
     public $recentOrders;
     public $topProducts;
     public $countryStats;
-    
+
     public $isQrisActive;
     public $activeVouchersCount;
-    
+
     public $chartLabels = [];
     public $chartData = [];
 
@@ -47,7 +47,7 @@ class DashboardAdmin extends Component
     {
         // Check apakah qris ada yang aktif (Sesuai logic awal kamu)
         $this->isQrisActive = Qris::where('is_active', 1)->exists();
-        
+
         if (!$this->isQrisActive) {
             LivewireAlert::title('Perhatian')
                 ->text('QRIS belum aktif. Segera upload foto QRIS agar transaksi berjalan.')
@@ -75,12 +75,10 @@ class DashboardAdmin extends Component
             ->whereYear('created_at', now()->year)
             ->count();
 
-        // 4. Revenue Stats (Mengambil dari Transaction yang sukses/settlement)
-        // Asumsi status sukses midtrans adalah 'settlement' atau 'capture'
-        $this->totalRevenue = Transaction::whereIn('status', ['settlement', 'capture', 'success'])
+        $this->totalRevenue = Transaction::whereIn('status', ['settlement'])
             ->sum('gross_amount');
-        
-        $this->transactionsCount = Transaction::whereIn('status', ['settlement', 'capture', 'success'])
+
+        $this->transactionsCount = Transaction::whereIn('status', ['settlement'])
             ->count();
 
         // 5. Voucher & QRIS

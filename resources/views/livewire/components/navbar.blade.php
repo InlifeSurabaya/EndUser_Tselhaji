@@ -17,8 +17,8 @@
                 @endauth
                 <a wire:navigate href="{{ route('order.check') }}"
                    class="text-neutral-600 hover:text-primary-600 transition font-medium">Cek Order</a>
-                <a wire:navigate href="#"
-                   class="text-neutral-600 hover:text-primary-600 transition font-medium">Bantuan</a>
+{{--                <a wire:navigate href="#"--}}
+{{--                   class="text-neutral-600 hover:text-primary-600 transition font-medium">Bantuan</a>--}}
             </div>
 
             <div class="hidden md:flex items-center space-x-4">

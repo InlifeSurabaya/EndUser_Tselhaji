@@ -24,7 +24,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $fillable = [
         'email',
-        'password',
+        'password', 'email_verified_at', 'remember_token', 'is_new',
     ];
 
     /**
@@ -73,5 +73,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function transaction(): HasMany
     {
         return $this->hasMany(Transaction::class);
+    }
+
+    public function userReference(): HasMany
+    {
+        return $this->hasMany(UserPreference::class);
     }
 }
