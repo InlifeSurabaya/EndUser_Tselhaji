@@ -37,6 +37,7 @@ class RealProductSeeder extends Seeder
             $quotaGb = $quotaMb > 0 ? ceil($quotaMb / 1024) : 0;
 
             $uniqueKey = "{$name}-{$price}-{$quotaGb}-{$validity}";
+//            $uniqueKey = "{$name}-{$price}-{$quotaGb}";
 
             if (!isset($uniqueProducts[$uniqueKey])) {
                 $uniqueProducts[$uniqueKey] = [
