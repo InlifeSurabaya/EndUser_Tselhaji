@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             UserProfileSeeder::class,
             VoucherSeeder::class,
             UserSegmentPriceSeeder::class,
+            GenereateAccountAndTransaction::class,
         ]);
 
         // User account
