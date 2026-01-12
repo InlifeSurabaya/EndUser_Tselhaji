@@ -116,20 +116,17 @@ class Create extends Component
         $this->productDiscount = 0;
         $this->voucherDiscount = 0;
 
-        // 1. Hitung Diskon Produk
         if ($this->product->discount > 0) {
             Log::info('Hitung diskon product');
             $this->productDiscount = ($originalPrice * $this->product->discount) / 100;
             Log::info('Hitung diskon product end ' . $this->productDiscount);
         }
 
-        // Harga berjalan setelah diskon produk
         $runningPrice = $originalPrice - $this->productDiscount;
 
         if ($this->discountSegmentUser > 0) {
             $this->segmentDiscountAmount = $runningPrice * ($this->discountSegmentUser / 100);
 
-            // Kurangi harga berjalan
             $runningPrice = $runningPrice - $this->segmentDiscountAmount;
         }
 
@@ -137,20 +134,16 @@ class Create extends Component
             $calculatedVoucherDiscount = 0;
 
             if ($this->voucherModel->discount_type === DiscountTypeEnum::PERCENTEAGE->value) {
-                // Voucher persen dihitung dari harga terakhir ($runningPrice)
                 $calculatedVoucherDiscount = $runningPrice * ($this->voucherModel->discount_value / 100);
             } elseif ($this->voucherModel->discount_type === DiscountTypeEnum::FIXED->value) {
                 $calculatedVoucherDiscount = $this->voucherModel->discount_value;
             }
 
-            // Pastikan diskon voucher tidak melebihi sisa harga yang harus dibayar
             $this->voucherDiscount = min($calculatedVoucherDiscount, $runningPrice);
 
-            // Kurangi harga berjalan
             $runningPrice = $runningPrice - $this->voucherDiscount;
         }
 
-        // Set Final Price (Pastikan tidak minus)
         $this->finalPrice = max(0, $runningPrice);
     }
 

@@ -10,6 +10,7 @@ use App\Models\UserPreference;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
 use Livewire\Attributes\Title;
@@ -61,10 +62,13 @@ class IndexProduct extends Component
 
         // Query History Transaksi
         $historySatuTahun = Transaction::where('user_id', $user->id)
-            ->whereBetween('created_at', [$date->copy()->startOfYear(), $date->copy()->endOfYear()]);
+            ->whereBetween('transaction_time', [$date->copy()->subYear()->startOfYear(), $date->copy()->subYear()->endOfYear()]);
 
         $historyBulanLalu = Transaction::where('user_id', $user->id)
-            ->whereBetween('created_at', [$date->copy()->subMonth()->startOfMonth(), $date->copy()->subMonth()->endOfMonth()]);
+            ->whereBetween('transaction_time', [$date->copy()->subMonth()->startOfMonth(), $date->copy()->subMonth()->endOfMonth()]);
+
+
+//        Log::info('QUERY: ' . $historySatuTahun->toRawSql());
 
         // Default: Anggap User Baru
         $targetSegment = UserSegmentEnum::NEW->value;
@@ -74,7 +78,7 @@ class IndexProduct extends Component
         $hasData    = false;
 
         // 1. LOGIC SEGMENTASI & DATA PREPARATION
-        if ($historySatuTahun->count() > 5) {
+        if ($historySatuTahun->count() >= 5) {
             // Kondisi: Loyal / Globetrotter
             $targetSegment = UserSegmentEnum::LOYAL->value;
 
@@ -84,7 +88,7 @@ class IndexProduct extends Component
             $inputDays    = $transactions->avg(fn($t) => $t->order->product->validity_days);
             $hasData      = true;
 
-        } elseif ($historyBulanLalu->count() > 2) {
+        } elseif ($historyBulanLalu->count() >= 2) {
             // Kondisi: Active / Jetsetter
             $targetSegment = UserSegmentEnum::ACTIVE->value;
 
@@ -107,11 +111,11 @@ class IndexProduct extends Component
             }
         }
 
-        // 2. AMBIL DISKON SPESIAL DARI DB
+        Log::info('Target segment: ' . $targetSegment);
+
         $promo = HargaSpesial::where('kategori_harga_spesial', $targetSegment)->first();
         $this->specialDiscount = $promo ? $promo->potongan_product : 0;
 
-        // 3. PANGGIL API AI
         if ($hasData) {
             try {
                 // Endpoint: /recommendation/{price}/{quota}/{day}
@@ -129,7 +133,6 @@ class IndexProduct extends Component
                     }
                 }
             } catch (\Exception $e) {
-                // Fallback jika API error: Kosongkan atau ambil random
                 $this->recommendationProducts = [];
             }
         }
