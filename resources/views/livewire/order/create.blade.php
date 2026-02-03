@@ -163,3 +163,24 @@
         </div>
     @endif
 </div>
+// Di halaman checkout, tambahkan script ini
+<script>
+document.addEventListener('livewire:initialized', () => {
+    // Listen untuk order created
+    Livewire.on('order-created', (event) => {
+        if (event.success) {
+            // Redirect ke success page
+            window.location.href = `/order/success/${event.order_number}`;
+        } else {
+            // Show error
+            Swal.fire('Error', event.message || 'Failed to create order', 'error');
+        }
+    });
+
+    // Intercept sebelum create order
+    Livewire.on('creating-order', () => {
+        // Bisa tambahkan loading state
+        console.log('Creating order in Laravel B...');
+    });
+});
+</script>

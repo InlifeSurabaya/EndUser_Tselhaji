@@ -18,6 +18,11 @@ use App\Livewire\Transaction\HistoryTransaction;
 use App\Livewire\User\UserProfile;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\ManajemenPesanan;
+
+use App\Livewire\RoamingAnalysis;
+
+Route::get('/roaming-analysis', RoamingAnalysis::class);
+
 use App\Livewire\Admin\Pengguna;
 use App\Livewire\UserReference\CreateUserReference;
 use App\Livewire\Admin\ManajemenHargaSpesial;
